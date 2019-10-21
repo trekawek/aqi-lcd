@@ -47,7 +47,7 @@ void createDisplayModel(JsonModel *json, DisplayModel *displayModel) {
   displayModel->pressure = json->pressure;
   displayModel->pm25rel = json->pm25 * 100 / PM25_MAX;
   displayModel->pm10rel = json->pm10 * 100 / PM10_MAX;
-  displayModel->index = getIndex(json);
+  displayModel->level = getLevel(json);
 }
 
 void loop(void) {

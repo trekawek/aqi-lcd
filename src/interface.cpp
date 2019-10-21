@@ -19,16 +19,16 @@
 #define INDICATOR_COLOR 0x0339
 
 void unpack(uint16_t color, uint8_t *colors) {
-  colors[0] = (color >> 11) & 0x3f;
-  colors[1] = (color >> 6) & 0x1f;
-  colors[2] = (color >> 0) & 0x3f;
+  colors[0] = (color >> 11) & 0x1f;
+  colors[1] = (color >> 5) & 0x3f;
+  colors[2] = (color >> 0) & 0x1f;
 }
 
 uint16_t pack(uint8_t *colors) {
   uint16_t r = colors[0];
   uint16_t g = colors[1];
   uint16_t b = colors[2];
-  return (r << 11) | (g << 6) | b;
+  return (r << 11) | (g << 5) | b;
 }
 
 uint16 mixColors(uint16_t c1, uint16_t c2, float f) {
@@ -46,9 +46,9 @@ uint16 mixColors(uint16_t c1, uint16_t c2, float f) {
 }
 
 void drawLevels(Adafruit_ILI9341 *tft, uint16_t x, uint16_t y) {
-  tft->fillCircle(x, y, 70, INDICATOR_COLOR);
+  tft->fillCircle(x, y, 65, INDICATOR_COLOR);
   
-  uint16_t colors[] = {0x2d24, 0xa644, 0xff66, 0xfd65, 0xf963, 0xf761};
+  uint16_t colors[] = {0x0400, 0x07e0, 0xffe0, 0xfd65, 0xf963, 0x9000};
   
   uint16_t x2 = x - 60;
   uint16_t y2 = y;
@@ -100,9 +100,7 @@ void drawScreen(Adafruit_ILI9341 *tft, DisplayModel *model) {
   tft->fillScreen(0);
 
   drawLevels(tft, 120, 75);
-  
-  float percent[] = {0.1, 0.3, 0.5, 0.7, 0.9};
-  drawIndicator(tft, percent[model->index], 120, 75);
+  drawIndicator(tft, model->level, 120, 75);
   
   tft->setTextColor(WHITE);
   tft->setTextSize(1);

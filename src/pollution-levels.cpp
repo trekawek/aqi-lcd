@@ -2,16 +2,20 @@
 
 #include "pollution-levels.h"
 
-int findThreshold(int v, const int levels[]) {
-  for (int i = 0; ; i++) {
-    if (levels[i] > v) {
-      return i - 1;
+float findThreshold(float v, const int levels[]) {
+  float prevLevel = 0;
+  for (int i = 1; i < 5; i++) {
+    float currentLevel = levels[i];
+    if (currentLevel > v) {
+      return ((v - prevLevel) / (currentLevel - prevLevel) + i - 1) / 4;
     }
+    prevLevel = currentLevel;
   }
+  return 1;
 }
 
-int getIndex(const JsonModel *model) {
-  int pm25Index = findThreshold(model->pm25, PM25_LEVELS);
-  int pm10Index = findThreshold(model->pm10, PM10_LEVELS);
-  return max(pm25Index, pm10Index);
+float getLevel(const JsonModel *model) {
+  float pm25Level = findThreshold(model->pm25, PM25_LEVELS);
+  float pm10Level = findThreshold(model->pm10, PM10_LEVELS);
+  return max(pm25Level, pm10Level);
 }

@@ -11,7 +11,7 @@ typedef struct {
   uint16_t temp;
   uint16_t humidity;
   uint16_t pressure;
-  uint16_t index;
+  float level;
 } DisplayModel;
 
 typedef struct {
