@@ -1,4 +1,4 @@
 #include <Arduino.h>
 #include "model.h"
 
-void getFromAqiEco(String url, displayModel *model);
+void getFromAqiEco(String url, JsonModel *model);

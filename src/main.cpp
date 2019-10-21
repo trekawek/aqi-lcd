@@ -1,4 +1,3 @@
-
 #include <Arduino.h>
 #include <SPI.h>
 #include <Adafruit_ILI9341.h>
@@ -7,8 +6,9 @@
 #include "config.h"
 #include "interface.h"
 #include "data-source/aqi-eco.h"
+#include "pollution-levels.h"
 
-enum jsonType {
+enum JsonType {
   AQI_ECO
 };
 #include "config.h"
@@ -38,15 +38,29 @@ void setup() {
   tft.setRotation(0);
 }
 
-void loop(void) {
-  displayModel model;
+void createDisplayModel(JsonModel *json, DisplayModel *displayModel) {
+  displayModel->pm10 = json->pm10;
+  displayModel->pm25 = json->pm25;
+  displayModel->temp = json->temp;
+  displayModel->humidity = json->humidity;
+  displayModel->pressure = json->pressure;
+  displayModel->pm25rel = json->pm25 * 100 / PM25_MAX;
+  displayModel->pm10rel = json->pm10 * 100 / PM10_MAX;
+  displayModel->index = getIndex(json);
+}
 
-  jsonType type = JSON_TYPE;
+void loop(void) {
+  JsonModel json;
+
+  JsonType type = JSON_TYPE;
   switch (type) {
     case AQI_ECO:
-    getFromAqiEco(JSON_URL, &model);
+    getFromAqiEco(JSON_URL, &json);
     break;
   }
-  drawScreen(&tft, &model);
+
+  DisplayModel displayModel;
+  createDisplayModel(&json, &displayModel);
+  drawScreen(&tft, &displayModel);
   delay(1000 * 60);
 }

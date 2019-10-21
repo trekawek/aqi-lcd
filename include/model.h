@@ -9,6 +9,6 @@ typedef struct {
   uint16_t temp;
   uint16_t humidity;
   uint16_t pressure;
-} displayModel;
+} JsonModel;
 
 #endif

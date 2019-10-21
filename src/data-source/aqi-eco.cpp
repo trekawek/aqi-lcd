@@ -4,7 +4,7 @@
 
 #include "data-source/aqi-eco.h"
 
-void getFromAqiEco(String url, displayModel *model) {
+void getFromAqiEco(String url, JsonModel *model) {
   std::unique_ptr<BearSSL::WiFiClientSecure>client(new BearSSL::WiFiClientSecure);
   client->setInsecure();
   

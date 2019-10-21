@@ -1,11 +1,9 @@
-
 #include <Arduino.h>
 #include <Adafruit_GFX.h>
 #include <Fonts/FreeSans12pt7b.h>
 #include <Fonts/FreeSans9pt7b.h>
 
 #include "interface.h"
-#include "timage.h"
 
 #include "bitmaps/icon-humidity.h"
 #include "bitmaps/icon-pm10.h"
@@ -19,25 +17,6 @@
 #define INDICATOR_RADIUS 4
 #define INDICATOR_LENGTH 40
 #define INDICATOR_COLOR 0x0339
-
-static const int PM25_LEVELS[] = {0, 15, 30, 55, 110, 32768};
-static const int PM10_LEVELS[] = {0, 25, 50, 90, 180, 32768};
-static const int PM25_MAX = 25;
-static const int PM10_MAX = 50;
-
-int findThreshold(int v, const int levels[]) {
-  for (int i = 0; ; i++) {
-    if (levels[i] > v) {
-      return i - 1;
-    }
-  }
-}
-
-int getIndex(const displayModel *model) {
-  int pm25Index = findThreshold(model->pm25, PM25_LEVELS);
-  int pm10Index = findThreshold(model->pm10, PM10_LEVELS);
-  return max(pm25Index, pm10Index);
-}
 
 void drawLevels(Adafruit_ILI9341 *tft, uint16_t x, uint16_t y) {
   tft->fillCircle(x, y, 70, INDICATOR_COLOR);
@@ -89,17 +68,13 @@ void drawBitmap(Adafruit_ILI9341 *tft, uint16_t x, uint16_t y, const tImage *ima
   }
 }
 
-void drawScreen(Adafruit_ILI9341 *tft, displayModel *model) {
-  int pm25rel = model->pm25 * 100 / PM25_MAX;
-  int pm10rel = model->pm10 * 100 / PM10_MAX;
-  int index = getIndex(model);
-  
+void drawScreen(Adafruit_ILI9341 *tft, DisplayModel *model) {
   tft->fillScreen(0);
 
   drawLevels(tft, 120, 75);
   
   float percent[] = {0.1, 0.3, 0.5, 0.7, 0.9};
-  drawIndicator(tft, percent[index], 120, 75);
+  drawIndicator(tft, percent[model->index], 120, 75);
   
   tft->setTextColor(WHITE);
   tft->setTextSize(1);
@@ -113,7 +88,7 @@ void drawScreen(Adafruit_ILI9341 *tft, displayModel *model) {
 
   tft->setFont(&FreeSans12pt7b);
   tft->setCursor(145, 105);
-  tft->print(pm25rel);
+  tft->print(model->pm25rel);
   tft->print("%");
 
   // pm 10
@@ -125,7 +100,7 @@ void drawScreen(Adafruit_ILI9341 *tft, displayModel *model) {
 
   tft->setFont(&FreeSans12pt7b);
   tft->setCursor(145, 150);
-  tft->print(pm10rel);
+  tft->print(model->pm10rel);
   tft->print("%");
 
   // temp
