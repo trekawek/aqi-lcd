@@ -2,6 +2,8 @@
 #include <SPI.h>
 #include <Adafruit_ILI9341.h>
 #include <ESP8266WiFi.h>
+#include <NTPClient.h>
+#include <WiFiUdp.h>
 
 #include "config.h"
 #include "interface.h"
@@ -18,6 +20,9 @@ enum JsonType {
 #define TFT_DC D1
 
 Adafruit_ILI9341 tft = Adafruit_ILI9341(TFT_CS, TFT_DC);
+
+WiFiUDP ntpUDP;
+NTPClient timeClient(ntpUDP, "pool.ntp.org", TIME_OFFSET * 3600);
 
 void setup() {
   Serial.begin(9600);
@@ -51,8 +56,9 @@ void createDisplayModel(JsonModel *json, DisplayModel *displayModel) {
 }
 
 void loop(void) {
-  JsonModel json;
+  timeClient.update();
 
+  JsonModel json;
   JsonType type = JSON_TYPE;
   switch (type) {
     case AQI_ECO:
@@ -63,9 +69,18 @@ void loop(void) {
     getFromLocalDevice(JSON_URL, &json);
     break;
   }
-
   DisplayModel displayModel;
   createDisplayModel(&json, &displayModel);
   drawScreen(&tft, &displayModel);
-  delay(1000 * 60);
+  
+  long start = millis();
+  long lastEpochTime = 0;
+  while ((millis() - start) < 1000 * 60) {
+    long epochTime = timeClient.getEpochTime();
+    if (lastEpochTime != epochTime) {
+      drawTime(&tft, timeClient.getFormattedTime());
+    }
+    lastEpochTime = epochTime;
+    delay(100);
+  }
 }

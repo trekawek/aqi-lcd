@@ -150,3 +150,12 @@ void drawScreen(Adafruit_ILI9341 *tft, DisplayModel *model) {
   drawBitmap(tft, 3, 227, &iconhumidity);
   drawBitmap(tft, 3, 275, &iconpressure);
 }
+
+void drawTime(Adafruit_ILI9341 *tft, String time) {
+  tft->fillRect(160, 3, 80, 20, BLACK);
+  tft->setTextColor(WHITE);
+  tft->setTextSize(1);
+  tft->setCursor(165, 17);
+  tft->setFont(&FreeSans9pt7b);
+  tft->print(time);
+}

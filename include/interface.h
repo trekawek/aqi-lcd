@@ -22,3 +22,5 @@ typedef struct {
 } tImage;
 
 void drawScreen(Adafruit_ILI9341 *tft, DisplayModel *model);
+
+void drawTime(Adafruit_ILI9341 *tft, String time);

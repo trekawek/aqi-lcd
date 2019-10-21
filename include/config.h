@@ -3,3 +3,5 @@
 
 #define WIFI_SSD "???"
 #define WIFI_PASSWORD "???"
+
+#define TIME_OFFSET +2
