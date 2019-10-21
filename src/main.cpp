@@ -6,10 +6,11 @@
 #include "config.h"
 #include "interface.h"
 #include "data-source/aqi-eco.h"
+#include "data-source/local.h"
 #include "pollution-levels.h"
 
 enum JsonType {
-  AQI_ECO
+  AQI_ECO, LOCAL_DEVICE
 };
 #include "config.h"
 
@@ -56,6 +57,10 @@ void loop(void) {
   switch (type) {
     case AQI_ECO:
     getFromAqiEco(JSON_URL, &json);
+    break;
+
+    case LOCAL_DEVICE:
+    getFromLocalDevice(JSON_URL, &json);
     break;
   }
 

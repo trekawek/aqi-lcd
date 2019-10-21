@@ -16,7 +16,10 @@ There's no configuration dashboard yet. The configuration has to be made inside 
 #define WIFI_PASSWORD "wifi password 123"
 ```
 
-For now, only the [aqi.eco](https://aqi.eco) is supported as a data source. In the future, the app will be able to gather stats from the local [Luftdaten](https://luftdaten.info/)-compatible device.
+The data sources (`JSON_TYPE`) are:
+
+* `AQI_ECO` - reads the JSON from the  [aqi.eco](https://aqi.eco), eg. `https://smolna.aqi.eco/13b/data.json`,
+* `LOCAL_DEVICE` - reads data from a local, Luftdaten sensor. The URL looks like this: `http://192.168.0.130/data.json`.
 
 ## Building
 
