@@ -18,10 +18,37 @@
 #define INDICATOR_LENGTH 40
 #define INDICATOR_COLOR 0x0339
 
+void unpack(uint16_t color, uint8_t *colors) {
+  colors[0] = (color >> 11) & 0x3f;
+  colors[1] = (color >> 6) & 0x1f;
+  colors[2] = (color >> 0) & 0x3f;
+}
+
+uint16_t pack(uint8_t *colors) {
+  uint16_t r = colors[0];
+  uint16_t g = colors[1];
+  uint16_t b = colors[2];
+  return (r << 11) | (g << 6) | b;
+}
+
+uint16 mixColors(uint16_t c1, uint16_t c2, float f) {
+  uint8_t rgb1[3];
+  uint8_t rgb2[3];
+  unpack(c1, rgb1);
+  unpack(c2, rgb2);
+
+  uint8_t rgb[3];
+  for (int i = 0; i < 3; i++) {
+    rgb[i] = (1 - f) * rgb1[i] + f * rgb2[i];
+  }
+
+  return pack(rgb);
+}
+
 void drawLevels(Adafruit_ILI9341 *tft, uint16_t x, uint16_t y) {
   tft->fillCircle(x, y, 70, INDICATOR_COLOR);
   
-  uint16_t colors[] = {0x2d24, 0xa644, 0xff66, 0xfd65, 0xf963};
+  uint16_t colors[] = {0x2d24, 0xa644, 0xff66, 0xfd65, 0xf963, 0xf761};
   
   uint16_t x2 = x - 60;
   uint16_t y2 = y;
@@ -32,7 +59,8 @@ void drawLevels(Adafruit_ILI9341 *tft, uint16_t x, uint16_t y) {
     uint16_t x3 = sin(PI + HALF_PI - angle) * 60 + x;
     uint16_t y3 = cos(PI + HALF_PI - angle) * 60 + y;
 
-    tft->fillTriangle(x, y, x2, y2, x3, y3, colors[(int)i]);
+    uint16 c = mixColors(colors[(int) i], colors[(int) i + 1], i - ((int) i));
+    tft->fillTriangle(x, y, x2, y2, x3, y3, c);
 
     x2 = x3;
     y2 = y3;
