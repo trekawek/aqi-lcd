@@ -1,3 +1,5 @@
+#ifndef _INTERFACE_H
+#define _INTERFACE_H
 
 #include <Adafruit_ILI9341.h>
 
@@ -24,3 +26,5 @@ typedef struct {
 void drawScreen(Adafruit_ILI9341 *tft, DisplayModel *model);
 
 void drawTime(Adafruit_ILI9341 *tft, String time);
+
+#endif

@@ -11,4 +11,8 @@ typedef struct {
   uint16_t pressure = 0;
 } JsonModel;
 
+typedef enum {
+  AQI_ECO, LOCAL_DEVICE
+} SensorType;
+
 #endif
