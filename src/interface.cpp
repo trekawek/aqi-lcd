@@ -1,7 +1,5 @@
 #include <Arduino.h>
 #include <Adafruit_GFX.h>
-#include <Fonts/FreeSans12pt7b.h>
-#include <Fonts/FreeSans9pt7b.h>
 
 #include "interface.h"
 
@@ -10,9 +8,6 @@
 #include "bitmaps/icon-pm25.h"
 #include "bitmaps/icon-pressure.h"
 #include "bitmaps/icon-temp.h"
-
-#define BLACK 0x0000
-#define WHITE 0xFFFF
 
 #define INDICATOR_RADIUS 4
 #define INDICATOR_LENGTH 40
@@ -149,13 +144,4 @@ void drawScreen(Adafruit_ILI9341 *tft, DisplayModel *model) {
   drawBitmap(tft, 7, 174, &icontemp);
   drawBitmap(tft, 3, 227, &iconhumidity);
   drawBitmap(tft, 3, 275, &iconpressure);
-}
-
-void drawTime(Adafruit_ILI9341 *tft, String time) {
-  tft->fillRect(160, 3, 80, 20, BLACK);
-  tft->setTextColor(WHITE);
-  tft->setTextSize(1);
-  tft->setCursor(165, 17);
-  tft->setFont(&FreeSans9pt7b);
-  tft->print(time);
 }

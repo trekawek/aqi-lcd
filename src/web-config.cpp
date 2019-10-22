@@ -1,12 +1,23 @@
+#include <Adafruit_GFX.h>
+#include <Adafruit_ILI9341.h>
+#include <DoubleResetDetector.h>
 #include <IotWebConf.h>
+#include <ESP8266WiFi.h>
 
 #include "web-config.h"
 
 #define CONFIG_VERSION "aqiled1"
 
+#define DRD_TIMEOUT 10
+#define DRD_ADDRESS 0
+
 char sensorUrl[512];
 char sensorType[16];
 char timezoneOffset[4];
+
+Adafruit_ILI9341 *webServerTft;
+
+DoubleResetDetector drd(DRD_TIMEOUT, DRD_ADDRESS);
 
 DNSServer dnsServer;
 WebServer server(80);
@@ -60,7 +71,37 @@ void setConfig(Config *config) {
   config->timeZoneOffset = String(timezoneOffset).toInt();
 }
 
-void initWebConfig(std::function<void(Config)> wifiConnected) {
+void displayConfig() {
+  webServerTft->print("Local IP:         ");
+  webServerTft->println(WiFi.localIP());
+
+  webServerTft->print("Sensor type:      ");
+  webServerTft->println(sensorType);
+  webServerTft->println("Sensor URL:");
+  webServerTft->println(sensorUrl);
+  webServerTft->print("Timezeone offset: ");
+  webServerTft->println(timezoneOffset);
+
+  delay(1000 * 2);
+}
+
+boolean connectAp(const char* apName, const char* password) {
+  webServerTft->println("Creating access point");
+  webServerTft->println("SSID:     " + String(apName));
+  webServerTft->println("Password: " + String(password));
+  return WiFi.softAP(apName, password);
+}
+
+void connectWifi(const char* ssid, const char* password) {
+  webServerTft->print("Connecting to WiFi ");
+  webServerTft->println(ssid);
+  WiFi.begin(ssid, password);
+}
+
+void initWebConfig(std::function<void(Config)> wifiConnected, Adafruit_ILI9341 *tft) {
+  webServerTft = tft;
+  webServerTft->println("Initializing device...");
+
   iotWebConf.addParameter(&sensorUrlParam);
   iotWebConf.addParameter(&sensorTypeParam);
   iotWebConf.addParameter(&timezoneOffsetParam);
@@ -68,8 +109,15 @@ void initWebConfig(std::function<void(Config)> wifiConnected) {
   iotWebConf.setWifiConnectionCallback([wifiConnected]{
     Config config;
     setConfig(&config);
+    displayConfig();
     wifiConnected(config);
   });
+  iotWebConf.setApConnectionHandler(&connectAp);
+  iotWebConf.setWifiConnectionHandler(&connectWifi);
+
+  if (!drd.detectDoubleReset()) {
+    iotWebConf.skipApStartup();
+  }
   iotWebConf.init();
 
   server.on("/", handleRoot);
@@ -79,4 +127,5 @@ void initWebConfig(std::function<void(Config)> wifiConnected) {
 
 void webConfigLoop() {
   iotWebConf.doLoop();
+  drd.loop();
 }

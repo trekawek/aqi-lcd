@@ -1,7 +1,6 @@
 #include <Arduino.h>
 #include <SPI.h>
 #include <Adafruit_ILI9341.h>
-#include <ESP8266WiFi.h>
 
 #include "clock.h"
 #include "model.h"
@@ -16,6 +15,7 @@ boolean connected = false;
 Adafruit_ILI9341 tft = Adafruit_ILI9341(TFT_CS, TFT_DC);
 
 void wifiConnected(Config config) {
+  tft.fillScreen(0);
   initClock(config.timeZoneOffset);
   initFetcher(config.sensorUrl, config.sensorType);
   connected = true;
@@ -29,7 +29,7 @@ void setup() {
   tft.setRotation(0);
   tft.fillScreen(0);
 
-  initWebConfig(&wifiConnected);
+  initWebConfig(&wifiConnected, &tft);
 }
 
 void loop(void) {

@@ -11,7 +11,7 @@ typedef struct {
   int timeZoneOffset;
 } Config;
 
-void initWebConfig(std::function<void(Config)> wifiConnected);
+void initWebConfig(std::function<void(Config)> wifiConnected, Adafruit_ILI9341 *tft);
 
 void webConfigLoop();
 

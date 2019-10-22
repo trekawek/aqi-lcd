@@ -2,8 +2,13 @@
 #define _INTERFACE_H
 
 #include <Adafruit_ILI9341.h>
+#include <Fonts/FreeSans12pt7b.h>
+#include <Fonts/FreeSans9pt7b.h>
 
 #include "model.h"
+
+#define BLACK 0x0000
+#define WHITE 0xFFFF
 
 typedef struct {
   uint16_t pm25;
@@ -24,7 +29,5 @@ typedef struct {
 } tImage;
 
 void drawScreen(Adafruit_ILI9341 *tft, DisplayModel *model);
-
-void drawTime(Adafruit_ILI9341 *tft, String time);
 
 #endif

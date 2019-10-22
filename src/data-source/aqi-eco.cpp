@@ -9,7 +9,6 @@ void getFromAqiEco(String url, JsonModel *model) {
   client->setInsecure();
   
   HTTPClient http;
-  Serial.print("[HTTP] begin...\n");
   http.begin(*client, url);
   int httpCode = http.GET();
   Serial.printf("[HTTP] Response code: %d\n", httpCode);

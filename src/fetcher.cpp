@@ -8,7 +8,7 @@
 #include "model.h"
 #include "pollution-levels.h"
 
-long lastDisplayUpdate = 0;
+long lastDisplayUpdate = -60 * 1000;
 
 String fetcherSensorUrl;
 SensorType fetcherSensorType;
@@ -33,14 +33,21 @@ void updateDisplay(Adafruit_ILI9341 *tft) {
   if (millis() - lastDisplayUpdate > 60 * 1000) {
     JsonModel json;
     
+    Serial.println("Updating sensor values");
     switch (fetcherSensorType) {
         case AQI_ECO:
+        Serial.println("Fetching from aqi.eco: " + fetcherSensorUrl);
         getFromAqiEco(fetcherSensorUrl, &json);
         break;
 
         case LOCAL_DEVICE:
+        Serial.println("Fetching from local device: " + fetcherSensorUrl);
         getFromLocalDevice(fetcherSensorUrl, &json);
         break;
+
+        default:
+        Serial.println("Invalid sensor type");
+        return;
     }
 
     DisplayModel displayModel;
