@@ -13,7 +13,7 @@
 
 char sensorUrl[512];
 char sensorType[16];
-char timezoneOffset[4];
+char timezoneOffset[5];
 
 Adafruit_ILI9341 *webServerTft;
 
@@ -24,7 +24,7 @@ WebServer server(80);
 IotWebConf iotWebConf("AQI LCD", &dnsServer, &server, NULL, CONFIG_VERSION);
 IotWebConfParameter sensorUrlParam = IotWebConfParameter("Sensor URL", "sensorUrl", sensorUrl, 512);
 IotWebConfParameter sensorTypeParam = IotWebConfParameter("Sensor type", "sensorType", sensorType, 16, "text", "AQI_ECO or LOCAL_DEVICE", "AQI_ECO");
-IotWebConfParameter timezoneOffsetParam = IotWebConfParameter("Timezone offset (hours)", "timezoneOffset", timezoneOffset, 4, "number", NULL, "1", "min='-12' max='12' step='1'");
+IotWebConfParameter timezoneOffsetParam = IotWebConfParameter("Timezone offset (hours)", "timezoneOffset", timezoneOffset, 5, "number", NULL, "1", "min=\"-12\" max=\"12\"");
 
 void handleRoot() {
   if (iotWebConf.handleCaptivePortal()) {

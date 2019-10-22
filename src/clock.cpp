@@ -19,7 +19,7 @@ void drawTime(Adafruit_ILI9341 *tft, String time) {
 }
 
 void initClock(int timezoneOffset) {
-  timeClient.setTimeOffset(timezoneOffset);
+  timeClient.setTimeOffset(timezoneOffset * 3600);
 }
 
 void updateClock(Adafruit_ILI9341 *tft) {
