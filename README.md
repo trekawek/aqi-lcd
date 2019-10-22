@@ -6,20 +6,16 @@ This is a simple app for the Wemos-based TFT display, presenting the pollution l
 
 ## Configuration
 
-There's no configuration dashboard yet. The configuration has to be made inside the [config.h](include/config.h) file before building the project. For instance:
-
-```
-#define JSON_URL "https://smolna.aqi.eco/13b/data.json"
-#define JSON_TYPE AQI_ECO
-
-#define WIFI_SSD "my-home-network"
-#define WIFI_PASSWORD "wifi password 123"
-```
-
-The data sources (`JSON_TYPE`) are:
+When the device starts, it creates a wifi network, called `AQI LCD`. Please connect to it, to configure the wifi network and the sensor URL. For now, two sensor types are supported:
 
 * `AQI_ECO` - reads the JSON from the  [aqi.eco](https://aqi.eco), eg. `https://smolna.aqi.eco/13b/data.json`,
 * `LOCAL_DEVICE` - reads data from a local, Luftdaten sensor. The URL looks like this: `http://192.168.0.130/data.json`.
+
+After saving the configuration, the device will be connected to the configured network.
+
+### Resetting configuration
+
+Hitting the "Reset" button twice will reset the device in AP mode, creating the `AQI LCD` network again.
 
 ## Building
 
