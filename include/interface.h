@@ -5,9 +5,6 @@
 
 #include "model.h"
 
-#define BLACK 0x0000
-#define WHITE 0xFFFF
-
 typedef struct {
   uint16_t pm25;
   uint16_t pm25rel;
