@@ -1,10 +1,7 @@
 #ifndef _INTERFACE_H
 #define _INTERFACE_H
 
-//#include <Adafruit_ILI9341.h>
 #include <TFT_eSPI.h>
-//#include <Fonts/FreeSans12pt7b.h>
-//#include <Fonts/FreeSans9pt7b.h>
 
 #include "model.h"
 
@@ -29,7 +26,6 @@ typedef struct {
   uint8_t  dataSize;
 } tImage;
 
-//void drawScreen(Adafruit_ILI9341 *tft, DisplayModel *model);
 void drawScreen(TFT_eSPI *tft, DisplayModel *model);
 
 #endif
