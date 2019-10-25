@@ -29,7 +29,7 @@ void createDisplayModel(JsonModel *json, DisplayModel *displayModel) {
   displayModel->level = getLevel(json);
 }
 
-void updateDisplay(Adafruit_ILI9341 *tft) {
+void updateDisplay(TFT_eSPI *tft) {
   if (millis() - lastDisplayUpdate > 60 * 1000) {
     JsonModel json;
     

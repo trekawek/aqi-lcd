@@ -1,5 +1,4 @@
-#include <Adafruit_GFX.h>
-#include <Adafruit_ILI9341.h>
+#include <TFT_eSPI.h>
 #include <DoubleResetDetector.h>
 #include <IotWebConf.h>
 #include <ESP8266WiFi.h>
@@ -15,7 +14,7 @@ char sensorUrl[512];
 char sensorType[16];
 char timezoneOffset[5];
 
-Adafruit_ILI9341 *webServerTft;
+TFT_eSPI *webServerTft;
 
 DoubleResetDetector drd(DRD_TIMEOUT, DRD_ADDRESS);
 
@@ -98,7 +97,7 @@ void connectWifi(const char* ssid, const char* password) {
   WiFi.begin(ssid, password);
 }
 
-void initWebConfig(std::function<void(Config)> wifiConnected, Adafruit_ILI9341 *tft) {
+void initWebConfig(std::function<void(Config)> wifiConnected, TFT_eSPI *tft) {
   webServerTft = tft;
   webServerTft->println("Initializing device...");
 

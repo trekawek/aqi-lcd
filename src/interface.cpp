@@ -1,5 +1,4 @@
 #include <Arduino.h>
-#include <Adafruit_GFX.h>
 
 #include "interface.h"
 
@@ -40,7 +39,7 @@ uint16 mixColors(uint16_t c1, uint16_t c2, float f) {
   return pack(rgb);
 }
 
-void drawLevels(Adafruit_ILI9341 *tft, uint16_t x, uint16_t y) {
+void drawLevels(TFT_eSPI *tft, uint16_t x, uint16_t y) {
   tft->fillCircle(x, y, 65, INDICATOR_COLOR);
   
   uint16_t colors[] = {0x0400, 0x07e0, 0xffe0, 0xfd65, 0xf963, 0x9000};
@@ -65,7 +64,8 @@ void drawLevels(Adafruit_ILI9341 *tft, uint16_t x, uint16_t y) {
   tft->fillRect(x - 70, y, 150, 70, BLACK);
 }
 
-void drawIndicator(Adafruit_ILI9341 *tft, float percent, uint16_t x, uint16_t y) {
+void drawIndicator(TFT_eSPI *tft, float percent, uint16_t x, uint16_t y) {
+
   float angle = percent * PI;
   tft->fillCircle(x, y, INDICATOR_RADIUS, INDICATOR_COLOR);
 
@@ -81,7 +81,8 @@ void drawIndicator(Adafruit_ILI9341 *tft, float percent, uint16_t x, uint16_t y)
   tft->fillTriangle(x1, y1, x2, y2, x3, y3, INDICATOR_COLOR);
 }
 
-void drawBitmap(Adafruit_ILI9341 *tft, uint16_t x, uint16_t y, const tImage *image) {
+void drawBitmap(TFT_eSPI *tft, uint16_t x, uint16_t y, const tImage *image) {
+
   uint16_t x0, y0;
   const uint16_t *pdata = image->data;
   for (y0 = 0; y0 < image->height; y0++) {
@@ -91,7 +92,8 @@ void drawBitmap(Adafruit_ILI9341 *tft, uint16_t x, uint16_t y, const tImage *ima
   }
 }
 
-void drawScreen(Adafruit_ILI9341 *tft, DisplayModel *model) {
+void drawScreen(TFT_eSPI *tft, DisplayModel *model) {
+
   tft->fillScreen(0);
 
   drawLevels(tft, 120, 75);
@@ -102,24 +104,24 @@ void drawScreen(Adafruit_ILI9341 *tft, DisplayModel *model) {
 
   // pm 2.5
   tft->setCursor(55, 100);
-  tft->setFont(&FreeSans12pt7b);
+  tft->setFreeFont(&FreeSans12pt7b);
   tft->print(model->pm25);
-  tft->setFont(&FreeSans9pt7b);
+  tft->setFreeFont(&FreeSans9pt7b);
   tft->print("ug/m3");
 
-  tft->setFont(&FreeSans12pt7b);
+  tft->setFreeFont(&FreeSans12pt7b);
   tft->setCursor(145, 105);
   tft->print(model->pm25rel);
   tft->print("%");
 
   // pm 10
   tft->setCursor(55, 150);
-  tft->setFont(&FreeSans12pt7b);
+  tft->setFreeFont(&FreeSans12pt7b);
   tft->print(model->pm10);
-  tft->setFont(&FreeSans9pt7b);
+  tft->setFreeFont(&FreeSans9pt7b);
   tft->print("ug/m3");
 
-  tft->setFont(&FreeSans12pt7b);
+  tft->setFreeFont(&FreeSans12pt7b);
   tft->setCursor(145, 150);
   tft->print(model->pm10rel);
   tft->print("%");

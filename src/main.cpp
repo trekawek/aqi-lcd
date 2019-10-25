@@ -1,6 +1,6 @@
 #include <Arduino.h>
 #include <SPI.h>
-#include <Adafruit_ILI9341.h>
+#include <TFT_eSPI.h>
 #include <XPT2046_Touchscreen.h>
 
 #include "clock.h"
@@ -8,14 +8,11 @@
 #include "fetcher.h"
 #include "web-config.h"
 
-#define TFT_CS D8
-#define TFT_DC D1
-#define TS_CS  D2
-
 boolean connected = false;
 
-Adafruit_ILI9341 tft = Adafruit_ILI9341(TFT_CS, TFT_DC);
-XPT2046_Touchscreen ts(TS_CS);
+TFT_eSPI tft = TFT_eSPI();
+
+XPT2046_Touchscreen ts(TOUCH_CS);
 
 void wifiConnected(Config config) {
   tft.fillScreen(0);
