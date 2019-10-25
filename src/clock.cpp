@@ -9,9 +9,9 @@ NTPClient timeClient(ntpUDP, "pool.ntp.org", 0);
 
 long lastEpochTime = 0;
 
-  void drawTime(TFT_eSPI *tft, String time) {
-  tft->fillRect(160, 3, 80, 20, BLACK);
-  tft->setTextColor(WHITE);
+void drawTime(TFT_eSPI *tft, String time) {
+  tft->fillRect(160, 3, 80, 20, TFT_BLACK);
+  tft->setTextColor(TFT_WHITE);
   tft->setTextSize(1);
   tft->setCursor(165, 17);
   tft->setFreeFont(&FreeSans9pt7b);
@@ -23,7 +23,6 @@ void initClock(int timezoneOffset) {
 }
 
 void updateClock(TFT_eSPI *tft) {
-  
   timeClient.update();
   long epochTime = timeClient.getEpochTime();
   if (lastEpochTime != epochTime) {
