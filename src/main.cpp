@@ -1,7 +1,7 @@
 #include <Arduino.h>
 #include <SPI.h>
 #include <TFT_eSPI.h>
-#include <XPT2046_Touchscreen.h>
+//#include <XPT2046_Touchscreen.h>
 
 #include "clock.h"
 #include "model.h"
@@ -12,7 +12,7 @@ boolean connected = false;
 
 TFT_eSPI tft = TFT_eSPI();
 
-XPT2046_Touchscreen ts(TOUCH_CS);
+//XPT2046_Touchscreen ts(TOUCH_CS);
 
 void wifiConnected(Config config) {
   tft.fillScreen(0);
@@ -33,13 +33,21 @@ void setup() {
 }
 
 void loop(void) {
+  uint16_t t_x = 0, t_y = 0;
   webConfigLoop();
   if (connected) {
     updateDisplay(&tft);
     updateClock(&tft);
-    TS_Point p = ts.getPoint();
-    if (ts.touched()) {
-      
-    }
+
+// sample touch input built in TFT_eSPI 
+    tft.getTouch(&t_x, &t_y);
+    tft.fillRect(0, 0, 50, 40, TFT_DARKGREY);
+    tft.setTextColor(TFT_YELLOW);
+    tft.setCursor(0, 12);
+    tft.setTextSize(1);
+    tft.print("X:");
+    tft.println(t_x);
+    tft.print("Y:");
+    tft.println(t_y);
   }
 }
