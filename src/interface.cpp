@@ -100,6 +100,7 @@ boolean isDifferent(float f1, float f2) {
 }
 
 void drawScreen(TFT_eSPI *tft, DisplayModel *model) {
+  
   if (isDifferent(previousModel.level, model->level)) {
     drawLevels(tft, 120, 75);
     drawIndicator(tft, model->level, 120, 75);
