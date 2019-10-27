@@ -33,21 +33,23 @@ void setup() {
 }
 
 void loop(void) {
-  uint16_t t_x = 0, t_y = 0;
   webConfigLoop();
   if (connected) {
     updateDisplay(&tft);
     updateClock(&tft);
-
-// sample touch input built in TFT_eSPI 
-    tft.getTouch(&t_x, &t_y);
-    tft.fillRect(0, 0, 50, 40, TFT_DARKGREY);
-    tft.setTextColor(TFT_YELLOW);
-    tft.setCursor(0, 12);
-    tft.setTextSize(1);
-    tft.print("X:");
-    tft.println(t_x);
-    tft.print("Y:");
-    tft.println(t_y);
+    //handleTouch();
   }
+}
+
+void handleTouch() {
+  uint16_t t_x = 0, t_y = 0;
+  tft.getTouch(&t_x, &t_y);
+  tft.fillRect(0, 0, 50, 40, TFT_DARKGREY);
+  tft.setTextColor(TFT_YELLOW);
+  tft.setCursor(0, 12);
+  tft.setTextSize(1);
+  tft.print("X:");
+  tft.println(t_x);
+  tft.print("Y:");
+  tft.println(t_y);
 }
