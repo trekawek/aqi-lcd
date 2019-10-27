@@ -11,7 +11,7 @@ float findThreshold(float v, const int levels[]) {
     }
     prevLevel = currentLevel;
   }
-  return 1;
+  return 1.0F;
 }
 
 float getLevel(const JsonModel *model) {
