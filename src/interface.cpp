@@ -140,6 +140,7 @@ void drawScreen(TFT_eSPI *tft, DisplayModel *model) {
 
   // temp
   if (isDifferent(previousModel.temp, model->temp)) {
+    tft->setFreeFont(&FreeSans12pt7b);
     tft->fillRect(55, 182, 185, 30, TFT_BLACK);
     tft->setCursor(90, 200);
     tft->print(model->temp);
@@ -148,6 +149,7 @@ void drawScreen(TFT_eSPI *tft, DisplayModel *model) {
 
   // humidity
   if (isDifferent(previousModel.humidity, model->humidity)) {
+    tft->setFreeFont(&FreeSans12pt7b);
     tft->fillRect(55, 232, 185, 30, TFT_BLACK);
     tft->setCursor(90, 250);
     tft->print(model->humidity);
@@ -156,6 +158,7 @@ void drawScreen(TFT_eSPI *tft, DisplayModel *model) {
 
   // pressure
   if (isDifferent(previousModel.pressure, model->pressure)) {
+    tft->setFreeFont(&FreeSans12pt7b);
     tft->fillRect(55, 282, 185, 30, TFT_BLACK);
     tft->setCursor(90, 300);
     tft->print(model->pressure);
