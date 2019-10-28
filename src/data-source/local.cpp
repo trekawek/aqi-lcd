@@ -5,22 +5,17 @@
 
 #include "data-source/local.h"
 
-const String P10_VALUES[] = { "SDS_P1", "PMS_P1", "HPM_P1", "" };
-const String P25_VALUES[] = { "SDS_P2", "PMS_P2", "HPM_P2", "" };
-const String TEMP_VALUES[] = { "BME280_temperature", "BMP_temperature", "" };
-const String HUMIDITY_VALUES[] = { "BME280_humidity", "" };
-const String PRESSURE_VALUES[] = { "BME280_pressure", "BMP_pressure", "" };
+const String LocalDataSource::P10_VALUES[] = { "SDS_P1", "PMS_P1", "HPM_P1", "" };
+const String LocalDataSource::P25_VALUES[] = { "SDS_P2", "PMS_P2", "HPM_P2", "" };
+const String LocalDataSource::TEMP_VALUES[] = { "BME280_temperature", "BMP_temperature", "" };
+const String LocalDataSource::HUMIDITY_VALUES[] = { "BME280_humidity", "" };
+const String LocalDataSource::PRESSURE_VALUES[] = { "BME280_pressure", "BMP_pressure", "" };
 
-bool inArray(const String array[], String str) {
-  for (int i = 0; array[i].length() > 0; i++) {
-    if (array[i] == str) {
-      return true;
-    }
-  }
-  return false;
+LocalDataSource::LocalDataSource(String url) {
+  this->url = url;
 }
 
-void getFromLocalDevice(String url, JsonModel *model) {
+void LocalDataSource::readModel(JsonModel *model) {
   HTTPClient http;
   Serial.print("[HTTP] Begin...\n");
   http.begin(url);
@@ -59,4 +54,13 @@ void getFromLocalDevice(String url, JsonModel *model) {
     }
   }
   http.end();
+}
+
+boolean LocalDataSource::inArray(const String array[], String str) {
+  for (int i = 0; array[i].length() > 0; i++) {
+    if (array[i] == str) {
+      return true;
+    }
+  }
+  return false;
 }

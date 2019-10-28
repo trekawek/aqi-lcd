@@ -3,11 +3,17 @@
 
 #include "model.h"
 
-static const int PM25_LEVELS[] = {0, 15, 30, 55, 110};
-static const int PM10_LEVELS[] = {0, 25, 50, 90, 180};
-static const int PM25_MAX = 25;
-static const int PM10_MAX = 50;
+class PollutionLevels {
+    public:
+    static const int PM25_LEVELS[];
+    static const int PM10_LEVELS[];
+    static const int PM25_MAX;
+    static const int PM10_MAX;
 
-float getLevel(const JsonModel *model);
+    static float getLevel(const JsonModel *model);
+
+    private:
+    static float findThreshold(float v, const int levels[]);
+};
 
 #endif

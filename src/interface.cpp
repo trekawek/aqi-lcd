@@ -12,39 +12,109 @@
 #define INDICATOR_LENGTH 40
 #define INDICATOR_COLOR 0x0339
 
-boolean initialDraw = true;
-DisplayModel previousModel = {0};
-
-void unpack(uint16_t color, uint8_t *colors) {
-  colors[0] = (color >> 11) & 0x1f;
-  colors[1] = (color >> 5) & 0x3f;
-  colors[2] = (color >> 0) & 0x1f;
+Interface::Interface(TFT_eSPI *tft) {
+  this->tft = tft;
 }
 
-uint16_t pack(uint8_t *colors) {
-  uint16_t r = colors[0];
-  uint16_t g = colors[1];
-  uint16_t b = colors[2];
-  return (r << 11) | (g << 5) | b;
-}
+void Interface::update(DisplayModel *model) {
+  if (this->initialDraw || isDifferent(this->previousModel.level, model->level)) {
+    drawLevels(120, 75);
+    drawIndicator(model->level, 120, 75);
+  }
+  
+  this->tft->setTextColor(TFT_WHITE);
+  this->tft->setTextSize(1);
 
-uint16 mixColors(uint16_t c1, uint16_t c2, float f) {
-  uint8_t rgb1[3];
-  uint8_t rgb2[3];
-  unpack(c1, rgb1);
-  unpack(c2, rgb2);
+  // pm 2.5
+  if (this->initialDraw || isDifferent(this->previousModel.pm25, model->pm25)) {
+    this->tft->fillRect(55, 82, 185, 30, TFT_BLACK);
+    this->tft->setCursor(55, 100);
+    this->tft->setFreeFont(&FreeSans12pt7b);
+    this->tft->print(model->pm25);
+    this->tft->setFreeFont(&FreeSans9pt7b);
+    this->tft->print("ug/m3");
 
-  uint8_t rgb[3];
-  for (int i = 0; i < 3; i++) {
-    rgb[i] = (1 - f) * rgb1[i] + f * rgb2[i];
+    this->tft->setFreeFont(&FreeSans12pt7b);
+    this->tft->setCursor(145, 105);
+    this->tft->print(model->pm25rel);
+    this->tft->print("%");
   }
 
-  return pack(rgb);
+  // pm 10
+  if (this->initialDraw || isDifferent(this->previousModel.pm10, model->pm10)) {
+    this->tft->fillRect(55, 132, 185, 30, TFT_BLACK);
+    this->tft->setCursor(55, 150);
+    this->tft->setFreeFont(&FreeSans12pt7b);
+    this->tft->print(model->pm10);
+    this->tft->setFreeFont(&FreeSans9pt7b);
+    this->tft->print("ug/m3");
+
+    this->tft->setFreeFont(&FreeSans12pt7b);
+    this->tft->setCursor(145, 150);
+    this->tft->print(model->pm10rel);
+    this->tft->print("%");
+  }
+
+  // temp
+  if (this->initialDraw || isDifferent(this->previousModel.temp, model->temp)) {
+    this->tft->setFreeFont(&FreeSans12pt7b);
+    this->tft->fillRect(55, 182, 185, 30, TFT_BLACK);
+    this->tft->setCursor(90, 200);
+    this->tft->print(model->temp);
+    this->tft->print("'C");
+  }
+
+  // humidity
+  if (this->initialDraw || isDifferent(this->previousModel.humidity, model->humidity)) {
+    this->tft->setFreeFont(&FreeSans12pt7b);
+    this->tft->fillRect(55, 232, 185, 30, TFT_BLACK);
+    this->tft->setCursor(90, 250);
+    this->tft->print(model->humidity);
+    this->tft->print("%");
+  }
+
+  // pressure
+  if (this->initialDraw || isDifferent(this->previousModel.pressure, model->pressure)) {
+    this->tft->setFreeFont(&FreeSans12pt7b);
+    this->tft->fillRect(55, 282, 185, 30, TFT_BLACK);
+    this->tft->setCursor(90, 300);
+    this->tft->print(model->pressure);
+    this->tft->print(" hPa");
+  }
+
+  if (this->initialDraw) {
+    drawBitmap(6, 79, &iconpm25);
+    drawBitmap(5, 129, &iconpm10);
+    drawBitmap(7, 174, &icontemp);
+    drawBitmap(3, 227, &iconhumidity);
+    drawBitmap(3, 275, &iconpressure);
+  }
+  this->initialDraw = false;
+  this->previousModel = *model;
 }
 
-void drawLevels(TFT_eSPI *tft, uint16_t x, uint16_t y) {
-  if (initialDraw) {
-    tft->fillCircle(x, y, 65, INDICATOR_COLOR);
+void Interface::drawTouchPosition(uint16_t x, uint16_t y, uint16_t z) {
+    tft->fillRect(0, 0, 58, 50, TFT_RED);
+    tft->setTextColor(TFT_YELLOW);
+    tft->setTextSize(1);
+    tft->setCursor(0, 12);
+    tft->print("X:");
+    tft->print(x);
+    tft->setCursor(0, 30);
+    tft->print("Y:");
+    tft->print(y);
+    tft->setCursor(0, 48);
+    tft->print("Z:");
+    tft->print(z);
+}
+
+void Interface::clearTouchPosition() {
+    tft->fillRect(0, 0, 58, 50, TFT_BLACK);
+}
+
+void Interface::drawLevels(uint16_t x, uint16_t y) {
+  if (this->initialDraw) {
+    this->tft->fillCircle(x, y, 65, INDICATOR_COLOR);
   }
   
   uint16_t colors[] = {0x0400, 0x07e0, 0xffe0, 0xfd65, 0xf963, 0x9000};
@@ -59,19 +129,19 @@ void drawLevels(TFT_eSPI *tft, uint16_t x, uint16_t y) {
     uint16_t y3 = cos(PI + HALF_PI - angle) * 60 + y;
 
     uint16 c = mixColors(colors[(int) i], colors[(int) i + 1], i - ((int) i));
-    tft->fillTriangle(x, y, x2, y2, x3, y3, c);
+    this->tft->fillTriangle(x, y, x2, y2, x3, y3, c);
 
     x2 = x3;
     y2 = y3;
   }
   
-  tft->fillCircle(x, y, 20, TFT_BLACK);
-  tft->fillRect(x - 70, y, 150, 70, TFT_BLACK);
+  this->tft->fillCircle(x, y, 20, TFT_BLACK);
+  this->tft->fillRect(x - 70, y, 150, 70, TFT_BLACK);
 }
 
-void drawIndicator(TFT_eSPI *tft, float percent, uint16_t x, uint16_t y) {
+void Interface::drawIndicator(float percent, uint16_t x, uint16_t y) {
   float angle = percent * PI;
-  tft->fillCircle(x, y, INDICATOR_RADIUS, INDICATOR_COLOR);
+  this->tft->fillCircle(x, y, INDICATOR_RADIUS, INDICATOR_COLOR);
 
   uint16_t x1 = sin(-angle) * (INDICATOR_RADIUS - 2) + x;
   uint16_t y1 = cos(-angle) * (INDICATOR_RADIUS - 2) + y;
@@ -82,96 +152,46 @@ void drawIndicator(TFT_eSPI *tft, float percent, uint16_t x, uint16_t y) {
   uint16_t x3 = sin(PI + HALF_PI - angle) * INDICATOR_LENGTH + x;
   uint16_t y3 = cos(PI + HALF_PI - angle) * INDICATOR_LENGTH + y;
 
-  tft->fillTriangle(x1, y1, x2, y2, x3, y3, INDICATOR_COLOR);
+  this->tft->fillTriangle(x1, y1, x2, y2, x3, y3, INDICATOR_COLOR);
 }
 
-void drawBitmap(TFT_eSPI *tft, uint16_t x, uint16_t y, const tImage *image) {
+void Interface::drawBitmap(uint16_t x, uint16_t y, const tImage *image) {
   uint16_t x0, y0;
   const uint16_t *pdata = image->data;
   for (y0 = 0; y0 < image->height; y0++) {
     for (x0 = 0; x0 < image->width; x0++) {
-      tft->drawPixel(x + x0, y + y0, *pdata++);
+      this->tft->drawPixel(x + x0, y + y0, *pdata++);
     }
   }
 }
 
-boolean isDifferent(float f1, float f2) {
-  return fabs(f1 - f2) > 0.05;
+void Interface::unpack(uint16_t color, uint8_t *colors) {
+  colors[0] = (color >> 11) & 0x1f;
+  colors[1] = (color >> 5) & 0x3f;
+  colors[2] = (color >> 0) & 0x1f;
 }
 
-void drawScreen(TFT_eSPI *tft, DisplayModel *model) {
-  if (initialDraw || isDifferent(previousModel.level, model->level)) {
-    drawLevels(tft, 120, 75);
-    drawIndicator(tft, model->level, 120, 75);
-  }
-  
-  tft->setTextColor(TFT_WHITE);
-  tft->setTextSize(1);
+uint16_t Interface::pack(uint8_t *colors) {
+  uint16_t r = colors[0];
+  uint16_t g = colors[1];
+  uint16_t b = colors[2];
+  return (r << 11) | (g << 5) | b;
+}
 
-  // pm 2.5
-  if (initialDraw || isDifferent(previousModel.pm25, model->pm25)) {
-    tft->fillRect(55, 82, 185, 30, TFT_BLACK);
-    tft->setCursor(55, 100);
-    tft->setFreeFont(&FreeSans12pt7b);
-    tft->print(model->pm25);
-    tft->setFreeFont(&FreeSans9pt7b);
-    tft->print("ug/m3");
+uint16 Interface::mixColors(uint16_t c1, uint16_t c2, float f) {
+  uint8_t rgb1[3];
+  uint8_t rgb2[3];
+  unpack(c1, rgb1);
+  unpack(c2, rgb2);
 
-    tft->setFreeFont(&FreeSans12pt7b);
-    tft->setCursor(145, 105);
-    tft->print(model->pm25rel);
-    tft->print("%");
+  uint8_t rgb[3];
+  for (int i = 0; i < 3; i++) {
+    rgb[i] = (1 - f) * rgb1[i] + f * rgb2[i];
   }
 
-  // pm 10
-  if (initialDraw || isDifferent(previousModel.pm10, model->pm10)) {
-    tft->fillRect(55, 132, 185, 30, TFT_BLACK);
-    tft->setCursor(55, 150);
-    tft->setFreeFont(&FreeSans12pt7b);
-    tft->print(model->pm10);
-    tft->setFreeFont(&FreeSans9pt7b);
-    tft->print("ug/m3");
+  return pack(rgb);
+}
 
-    tft->setFreeFont(&FreeSans12pt7b);
-    tft->setCursor(145, 150);
-    tft->print(model->pm10rel);
-    tft->print("%");
-  }
-
-  // temp
-  if (initialDraw || isDifferent(previousModel.temp, model->temp)) {
-    tft->setFreeFont(&FreeSans12pt7b);
-    tft->fillRect(55, 182, 185, 30, TFT_BLACK);
-    tft->setCursor(90, 200);
-    tft->print(model->temp);
-    tft->print("'C");
-  }
-
-  // humidity
-  if (initialDraw || isDifferent(previousModel.humidity, model->humidity)) {
-    tft->setFreeFont(&FreeSans12pt7b);
-    tft->fillRect(55, 232, 185, 30, TFT_BLACK);
-    tft->setCursor(90, 250);
-    tft->print(model->humidity);
-    tft->print("%");
-  }
-
-  // pressure
-  if (initialDraw || isDifferent(previousModel.pressure, model->pressure)) {
-    tft->setFreeFont(&FreeSans12pt7b);
-    tft->fillRect(55, 282, 185, 30, TFT_BLACK);
-    tft->setCursor(90, 300);
-    tft->print(model->pressure);
-    tft->print(" hPa");
-  }
-
-  if (initialDraw) {
-    drawBitmap(tft, 6, 79, &iconpm25);
-    drawBitmap(tft, 5, 129, &iconpm10);
-    drawBitmap(tft, 7, 174, &icontemp);
-    drawBitmap(tft, 3, 227, &iconhumidity);
-    drawBitmap(tft, 3, 275, &iconpressure);
-  }
-  initialDraw = false;
-  previousModel = *model;
+boolean Interface::isDifferent(float f1, float f2) {
+  return fabs(f1 - f2) > 0.05;
 }

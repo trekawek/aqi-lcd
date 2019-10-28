@@ -4,12 +4,16 @@
 
 #include "data-source/aqi-eco.h"
 
-void getFromAqiEco(String url, JsonModel *model) {
+AqiEcoDataSource::AqiEcoDataSource(String url) {
+  this->url = url;
+}
+
+void AqiEcoDataSource::readModel(JsonModel *model) {
   std::unique_ptr<BearSSL::WiFiClientSecure>client(new BearSSL::WiFiClientSecure);
   client->setInsecure();
   
   HTTPClient http;
-  http.begin(*client, url);
+  http.begin(*client, this->url);
   int httpCode = http.GET();
   Serial.printf("[HTTP] Response code: %d\n", httpCode);
   if (httpCode > 0) {
