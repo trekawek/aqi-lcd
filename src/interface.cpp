@@ -100,8 +100,7 @@ boolean isDifferent(float f1, float f2) {
 }
 
 void drawScreen(TFT_eSPI *tft, DisplayModel *model) {
-  
-  if (isDifferent(previousModel.level, model->level)) {
+  if (initialDraw || isDifferent(previousModel.level, model->level)) {
     drawLevels(tft, 120, 75);
     drawIndicator(tft, model->level, 120, 75);
   }
@@ -110,7 +109,7 @@ void drawScreen(TFT_eSPI *tft, DisplayModel *model) {
   tft->setTextSize(1);
 
   // pm 2.5
-  if (isDifferent(previousModel.pm25, model->pm25)) {
+  if (initialDraw || isDifferent(previousModel.pm25, model->pm25)) {
     tft->fillRect(55, 82, 185, 30, TFT_BLACK);
     tft->setCursor(55, 100);
     tft->setFreeFont(&FreeSans12pt7b);
@@ -125,7 +124,7 @@ void drawScreen(TFT_eSPI *tft, DisplayModel *model) {
   }
 
   // pm 10
-  if (isDifferent(previousModel.pm10, model->pm10)) {
+  if (initialDraw || isDifferent(previousModel.pm10, model->pm10)) {
     tft->fillRect(55, 132, 185, 30, TFT_BLACK);
     tft->setCursor(55, 150);
     tft->setFreeFont(&FreeSans12pt7b);
@@ -140,7 +139,7 @@ void drawScreen(TFT_eSPI *tft, DisplayModel *model) {
   }
 
   // temp
-  if (isDifferent(previousModel.temp, model->temp)) {
+  if (initialDraw || isDifferent(previousModel.temp, model->temp)) {
     tft->setFreeFont(&FreeSans12pt7b);
     tft->fillRect(55, 182, 185, 30, TFT_BLACK);
     tft->setCursor(90, 200);
@@ -149,7 +148,7 @@ void drawScreen(TFT_eSPI *tft, DisplayModel *model) {
   }
 
   // humidity
-  if (isDifferent(previousModel.humidity, model->humidity)) {
+  if (initialDraw || isDifferent(previousModel.humidity, model->humidity)) {
     tft->setFreeFont(&FreeSans12pt7b);
     tft->fillRect(55, 232, 185, 30, TFT_BLACK);
     tft->setCursor(90, 250);
@@ -158,7 +157,7 @@ void drawScreen(TFT_eSPI *tft, DisplayModel *model) {
   }
 
   // pressure
-  if (isDifferent(previousModel.pressure, model->pressure)) {
+  if (initialDraw || isDifferent(previousModel.pressure, model->pressure)) {
     tft->setFreeFont(&FreeSans12pt7b);
     tft->fillRect(55, 282, 185, 30, TFT_BLACK);
     tft->setCursor(90, 300);
