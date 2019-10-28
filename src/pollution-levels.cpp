@@ -5,7 +5,7 @@
 const int PollutionLevels::PM25_LEVELS[] = {0, 15, 30, 55, 110};
 const int PollutionLevels::PM10_LEVELS[] = {0, 25, 50, 90, 180};
 const int PollutionLevels::PM25_MAX = 25;
-const int PollutionLevels::PM10_MAX = 10;
+const int PollutionLevels::PM10_MAX = 50;
 
 float PollutionLevels::getLevel(const JsonModel *model) {
   float pm25Level = findThreshold(model->pm25, PM25_LEVELS);
