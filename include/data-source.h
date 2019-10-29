@@ -7,7 +7,7 @@
 class DataSource {
     public:
     static DataSource* createDataSource(SensorType sensorType, String sensorUrl);
-    virtual void readModel(JsonModel *model);
+    virtual boolean readModel(JsonModel *model);
 
     protected:
     String url;

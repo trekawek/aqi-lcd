@@ -11,7 +11,7 @@
 class Fetcher {
     public:
     Fetcher(Interface *interface, DataSource *dataSource);
-    void update();
+    boolean update();
 
     private:
     Interface *interface;

@@ -8,7 +8,8 @@ AqiEcoDataSource::AqiEcoDataSource(String url) {
   this->url = url;
 }
 
-void AqiEcoDataSource::readModel(JsonModel *model) {
+boolean AqiEcoDataSource::readModel(JsonModel *model) {
+  boolean result = false;
   std::unique_ptr<BearSSL::WiFiClientSecure>client(new BearSSL::WiFiClientSecure);
   client->setInsecure();
   
@@ -31,7 +32,9 @@ void AqiEcoDataSource::readModel(JsonModel *model) {
       model->temp = average_1h["temperature"];
       model->humidity = average_1h["humidity"];
       model->pressure = average_1h["pressure"];
+      result = true;
     }
   }
   http.end();
+  return result;
 }

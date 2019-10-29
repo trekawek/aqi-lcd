@@ -15,7 +15,8 @@ LocalDataSource::LocalDataSource(String url) {
   this->url = url;
 }
 
-void LocalDataSource::readModel(JsonModel *model) {
+boolean LocalDataSource::readModel(JsonModel *model) {
+  boolean result = false;
   HTTPClient http;
   Serial.print("[HTTP] Begin...\n");
   http.begin(url);
@@ -52,8 +53,10 @@ void LocalDataSource::readModel(JsonModel *model) {
     } else if (inArray(PRESSURE_VALUES, n)) {
       model->pressure = v.toInt() / 100;
     }
+    result = true;
   }
   http.end();
+  return result;
 }
 
 boolean LocalDataSource::inArray(const String array[], String str) {

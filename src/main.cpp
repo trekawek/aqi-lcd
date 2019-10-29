@@ -8,6 +8,7 @@
 #include "interface.h"
 #include "touch-interface.h"
 #include "web-config.h"
+#include "wifi-status.h"
 
 boolean connected = false;
 
@@ -18,6 +19,7 @@ DataSource *dataSource;
 Fetcher *fetcher;
 WebConfig *webConfig;
 TouchInterface *touchInterface;
+WifiStatus *wifiStatus;
 
 void wifiConnected(Config config) {
   tft->fillScreen(0);
@@ -26,6 +28,7 @@ void wifiConnected(Config config) {
   interface = new Interface(tft);
   fetcher = new Fetcher(interface, dataSource);
   touchInterface = new TouchInterface(tft, interface);
+  wifiStatus = new WifiStatus(tft);
   connected = true;
 }
 
@@ -41,8 +44,9 @@ void setup() {
 void loop(void) {
   webConfig->update();
   if (connected) {
-    fetcher->update();
+    boolean dataReceived = fetcher->update();
     displayClock->update();
     touchInterface->update();
+    wifiStatus->update(dataReceived);
   }
 }

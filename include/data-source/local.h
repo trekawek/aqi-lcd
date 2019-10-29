@@ -8,7 +8,7 @@
 class LocalDataSource : public DataSource {
     public:
     LocalDataSource(String url);
-    void readModel(JsonModel *model);
+    boolean readModel(JsonModel *model);
 
     private:
     static const String P10_VALUES[];

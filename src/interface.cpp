@@ -17,9 +17,11 @@ Interface::Interface(TFT_eSPI *tft) {
 }
 
 void Interface::update(DisplayModel *model) {
+  boolean levelsRedrawn = false;
   if (this->initialDraw || isDifferent(this->previousModel.level, model->level)) {
     drawLevels(120, 95);
     drawIndicator(model->level, 120, 95);
+    levelsRedrawn = true;
   }
   
   this->tft->setTextColor(TFT_WHITE);
@@ -29,7 +31,7 @@ void Interface::update(DisplayModel *model) {
   int32_t offset = 40;
   
   // pm 2.5
-  if (this->initialDraw || isDifferent(this->previousModel.pm25, model->pm25)) {
+  if (levelsRedrawn || this->initialDraw || isDifferent(this->previousModel.pm25, model->pm25)) {
     this->tft->fillRect(55, y - 18, 185, offset - 20, TFT_BLACK);
     this->tft->setCursor(55, y);
     this->tft->setFreeFont(&FreeSans12pt7b);

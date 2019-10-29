@@ -13,6 +13,7 @@ class TouchInterface {
   private:
   TFT_eSPI *tft;
   Interface *interface;
+  boolean touchDisplayed;
 };
 
 #endif

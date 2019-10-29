@@ -13,16 +13,21 @@ Fetcher::Fetcher(Interface *interface, DataSource *dataSource) {
   this->dataSource = dataSource;
 }
 
-void Fetcher::update() {
+boolean Fetcher::update() {
   if (millis() - this->lastDisplayUpdate > 60 * 1000) {
     JsonModel json;
     Serial.println("Updating sensor values");
-    this->dataSource->readModel(&json);
-    DisplayModel displayModel;
-    createDisplayModel(&json, &displayModel);
-    interface->update(&displayModel);
-    this->lastDisplayUpdate = millis();
+    if (this->dataSource->readModel(&json)) {
+      DisplayModel displayModel;
+      createDisplayModel(&json, &displayModel);
+      interface->update(&displayModel);
+      this->lastDisplayUpdate = millis();
+      return true;
+    } else {
+      return false;
+    }
   }
+  return true;
 }
 
 void Fetcher::createDisplayModel(JsonModel *json, DisplayModel *displayModel) {

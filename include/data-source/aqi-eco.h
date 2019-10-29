@@ -8,7 +8,7 @@
 class AqiEcoDataSource : public DataSource {
     public:
     AqiEcoDataSource(String url);
-    void readModel(JsonModel *model);
+    boolean readModel(JsonModel *model);
 };
 
 #endif

@@ -10,7 +10,9 @@ void TouchInterface::update() {
   if (tft->getTouch(&x, &y, 150)) {
     z = tft->getTouchRawZ();
     interface->drawTouchPosition(x, y, z);
-  } else {
+    touchDisplayed = true;
+  } else if (touchDisplayed) {
     interface->clearTouchPosition();
+    touchDisplayed = false;
   }
 }
