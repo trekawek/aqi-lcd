@@ -202,5 +202,5 @@ uint16 Interface::mixColors(uint16_t c1, uint16_t c2, float f) {
 }
 
 boolean Interface::isDifferent(float f1, float f2) {
-  return fabs(f1 - f2) > 0.05;
+  return fabs(f1 - f2) > 0.001;
 }
