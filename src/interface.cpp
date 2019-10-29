@@ -18,76 +18,85 @@ Interface::Interface(TFT_eSPI *tft) {
 
 void Interface::update(DisplayModel *model) {
   if (this->initialDraw || isDifferent(this->previousModel.level, model->level)) {
-    drawLevels(120, 75);
-    drawIndicator(model->level, 120, 75);
+    drawLevels(120, 95);
+    drawIndicator(model->level, 120, 95);
   }
   
   this->tft->setTextColor(TFT_WHITE);
   this->tft->setTextSize(1);
 
+  int32_t y = 135;
+  int32_t offset = 40;
+  
   // pm 2.5
   if (this->initialDraw || isDifferent(this->previousModel.pm25, model->pm25)) {
-    this->tft->fillRect(55, 82, 185, 30, TFT_BLACK);
-    this->tft->setCursor(55, 100);
+    this->tft->fillRect(55, y - 18, 185, offset - 20, TFT_BLACK);
+    this->tft->setCursor(55, y);
     this->tft->setFreeFont(&FreeSans12pt7b);
     this->tft->print(model->pm25);
     this->tft->setFreeFont(&FreeSans9pt7b);
     this->tft->print("ug/m3");
 
     this->tft->setFreeFont(&FreeSans12pt7b);
-    this->tft->setCursor(145, 105);
+    this->tft->setCursor(145, y);
     this->tft->print(model->pm25rel);
     this->tft->print("%");
   }
+  y += offset;
 
   // pm 10
   if (this->initialDraw || isDifferent(this->previousModel.pm10, model->pm10)) {
-    this->tft->fillRect(55, 132, 185, 30, TFT_BLACK);
-    this->tft->setCursor(55, 150);
+    this->tft->fillRect(55, y - 18, 185, offset - 20, TFT_BLACK);
+    this->tft->setCursor(55, y);
     this->tft->setFreeFont(&FreeSans12pt7b);
     this->tft->print(model->pm10);
     this->tft->setFreeFont(&FreeSans9pt7b);
     this->tft->print("ug/m3");
 
     this->tft->setFreeFont(&FreeSans12pt7b);
-    this->tft->setCursor(145, 150);
+    this->tft->setCursor(145, y);
     this->tft->print(model->pm10rel);
     this->tft->print("%");
   }
+  y += offset;
 
   // temp
   if (this->initialDraw || isDifferent(this->previousModel.temp, model->temp)) {
     this->tft->setFreeFont(&FreeSans12pt7b);
-    this->tft->fillRect(55, 182, 185, 30, TFT_BLACK);
-    this->tft->setCursor(90, 200);
+    this->tft->fillRect(55, y - 18, 185, offset - 20, TFT_BLACK);
+    this->tft->setCursor(55, y);
     this->tft->print(model->temp);
     this->tft->print("'C");
   }
+  y += offset;
 
   // humidity
   if (this->initialDraw || isDifferent(this->previousModel.humidity, model->humidity)) {
     this->tft->setFreeFont(&FreeSans12pt7b);
-    this->tft->fillRect(55, 232, 185, 30, TFT_BLACK);
-    this->tft->setCursor(90, 250);
+    this->tft->fillRect(55, y - 18, 185, offset - 20, TFT_BLACK);
+    this->tft->setCursor(90, y);
     this->tft->print(model->humidity);
     this->tft->print("%");
   }
+  y += offset;
 
   // pressure
   if (this->initialDraw || isDifferent(this->previousModel.pressure, model->pressure)) {
     this->tft->setFreeFont(&FreeSans12pt7b);
-    this->tft->fillRect(55, 282, 185, 30, TFT_BLACK);
-    this->tft->setCursor(90, 300);
+    this->tft->fillRect(55, y - 18, 185, offset - 20, TFT_BLACK);
+    this->tft->setCursor(90, y);
     this->tft->print(model->pressure);
     this->tft->print(" hPa");
   }
 
+  y = 110;
+  offset = 40;
   if (this->initialDraw) {
-    drawBitmap(6, 79, &iconpm25);
-    drawBitmap(5, 129, &iconpm10);
-    drawBitmap(7, 174, &icontemp);
-    drawBitmap(3, 227, &iconhumidity);
-    drawBitmap(3, 275, &iconpressure);
+    drawBitmap(6, y, &iconpm25);
+    drawBitmap(5, y += offset, &iconpm10);
+    drawBitmap(7, y += offset, &icontemp);
+    drawBitmap(3, y += offset, &iconhumidity);
+    drawBitmap(3, y += offset, &iconpressure);
   }
   this->initialDraw = false;
   this->previousModel = *model;
