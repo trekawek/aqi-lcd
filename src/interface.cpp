@@ -37,7 +37,11 @@ void Interface::update(DisplayModel *model) {
     this->tft->setFreeFont(&FreeSans12pt7b);
     this->tft->print(model->pm25);
     this->tft->setFreeFont(&FreeSans9pt7b);
-    this->tft->print("ug/m3");
+    this->tft->print("ug/m");
+    this->tft->setCursor(this->tft->getCursorX(), y - 6);
+    this->tft->print("3");
+    this->tft->setCursor(this->tft->getCursorX(), y);
+    this->tft->drawRect(this->tft->getCursorX() - 49, this->tft->getCursorY(), 2, 4, TFT_WHITE);
 
     this->tft->setFreeFont(&FreeSans12pt7b);
     this->tft->setCursor(145, y);
@@ -53,7 +57,11 @@ void Interface::update(DisplayModel *model) {
     this->tft->setFreeFont(&FreeSans12pt7b);
     this->tft->print(model->pm10);
     this->tft->setFreeFont(&FreeSans9pt7b);
-    this->tft->print("ug/m3");
+    this->tft->print("ug/m");
+    this->tft->setCursor(this->tft->getCursorX(), y - 6);
+    this->tft->print("3");
+    this->tft->setCursor(this->tft->getCursorX(), y);
+    this->tft->drawRect(this->tft->getCursorX() - 49, this->tft->getCursorY(), 2, 4, TFT_WHITE);
 
     this->tft->setFreeFont(&FreeSans12pt7b);
     this->tft->setCursor(145, y);
