@@ -66,9 +66,10 @@ void Interface::update(DisplayModel *model) {
   if (this->initialDraw || isDifferent(this->previousModel.temp, model->temp)) {
     this->tft->setFreeFont(&FreeSans12pt7b);
     this->tft->fillRect(55, y - 18, 185, offset - 20, TFT_BLACK);
-    this->tft->setCursor(55, y);
+    this->tft->setCursor(90, y);
     this->tft->print(model->temp);
-    this->tft->print("'C");
+    this->tft->print(" C");
+    this->tft->drawCircle(this->tft->getCursorX() - 20, y - 15, 2, TFT_WHITE);
   }
   y += offset;
 
