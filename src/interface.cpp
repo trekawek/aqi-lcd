@@ -32,7 +32,7 @@ void Interface::update(DisplayModel *model) {
   
   // pm 2.5
   if (levelsRedrawn || this->initialDraw || isDifferent(this->previousModel.pm25, model->pm25)) {
-    this->tft->fillRect(55, y - 18, 185, offset - 20, TFT_BLACK);
+    this->tft->fillRect(55, y - 18, 185, offset - 15, TFT_BLACK);
     this->tft->setCursor(55, y);
     this->tft->setFreeFont(&FreeSans12pt7b);
     this->tft->print(model->pm25);
@@ -52,7 +52,7 @@ void Interface::update(DisplayModel *model) {
 
   // pm 10
   if (this->initialDraw || isDifferent(this->previousModel.pm10, model->pm10)) {
-    this->tft->fillRect(55, y - 18, 185, offset - 20, TFT_BLACK);
+    this->tft->fillRect(55, y - 18, 185, offset - 15, TFT_BLACK);
     this->tft->setCursor(55, y);
     this->tft->setFreeFont(&FreeSans12pt7b);
     this->tft->print(model->pm10);
@@ -73,7 +73,7 @@ void Interface::update(DisplayModel *model) {
   // temp
   if (this->initialDraw || isDifferent(this->previousModel.temp, model->temp)) {
     this->tft->setFreeFont(&FreeSans12pt7b);
-    this->tft->fillRect(55, y - 18, 185, offset - 20, TFT_BLACK);
+    this->tft->fillRect(55, y - 18, 185, offset - 15, TFT_BLACK);
     this->tft->setCursor(90, y);
     this->tft->print(model->temp);
     this->tft->print(" C");
@@ -84,7 +84,7 @@ void Interface::update(DisplayModel *model) {
   // humidity
   if (this->initialDraw || isDifferent(this->previousModel.humidity, model->humidity)) {
     this->tft->setFreeFont(&FreeSans12pt7b);
-    this->tft->fillRect(55, y - 18, 185, offset - 20, TFT_BLACK);
+    this->tft->fillRect(55, y - 18, 185, offset - 15, TFT_BLACK);
     this->tft->setCursor(90, y);
     this->tft->print(model->humidity);
     this->tft->print("%");
@@ -94,7 +94,7 @@ void Interface::update(DisplayModel *model) {
   // pressure
   if (this->initialDraw || isDifferent(this->previousModel.pressure, model->pressure)) {
     this->tft->setFreeFont(&FreeSans12pt7b);
-    this->tft->fillRect(55, y - 18, 185, offset - 20, TFT_BLACK);
+    this->tft->fillRect(55, y - 18, 185, offset - 15, TFT_BLACK);
     this->tft->setCursor(90, y);
     this->tft->print(model->pressure);
     this->tft->print(" hPa");
@@ -135,6 +135,7 @@ void Interface::clearTouchPosition() {
 void Interface::drawLevels(uint16_t x, uint16_t y) {
   if (this->initialDraw) {
     this->tft->fillCircle(x, y, 65, INDICATOR_COLOR);
+    this->tft->fillRect(x - 70, y, 150, 70, TFT_BLACK);
   }
   
   uint16_t colors[] = {0x0400, 0x07e0, 0xffe0, 0xfd65, 0xf963, 0x9000};
@@ -156,7 +157,6 @@ void Interface::drawLevels(uint16_t x, uint16_t y) {
   }
   
   this->tft->fillCircle(x, y, 20, TFT_BLACK);
-  this->tft->fillRect(x - 70, y, 150, 70, TFT_BLACK);
 }
 
 void Interface::drawIndicator(float percent, uint16_t x, uint16_t y) {
