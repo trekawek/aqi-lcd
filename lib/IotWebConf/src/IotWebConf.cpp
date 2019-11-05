@@ -54,6 +54,24 @@ IotWebConfParameter::IotWebConfParameter(
   this->visible = true;
   this->errorMessage = NULL;
 }
+IotWebConfParameter::IotWebConfParameter(
+    const char* label, const char* id, char* valueBuffer, int length,
+    const char* type, const String* optionNames, const String* optionValues,
+    const char* defaultValue)
+{
+  this->label = label;
+  this->_id = id;
+  this->valueBuffer = valueBuffer;
+  this->_length = length;
+  this->type = type;
+  this->optionNames = optionNames;
+  this->optionValues = optionValues;
+  this->defaultValue = defaultValue;
+  this->placeholder = NULL;
+  this->customHtml = NULL;
+  this->visible = true;
+  this->errorMessage = NULL;
+}
 
 IotWebConfSeparator::IotWebConfSeparator()
     : IotWebConfParameter(NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, true)
@@ -440,20 +458,27 @@ void IotWebConf::handleConfig()
           pitem.replace("{p}", current->placeholder == NULL ? "" : current->placeholder);
           snprintf(parLength, 5, "%d", current->getLength());
           pitem.replace("{l}", parLength);
+
+          String value;
           if (strcmp("password", current->type) == 0)
           {
             // -- Value of password is not rendered
-            pitem.replace("{v}", "");
+            value = "";
           }
           else if (this->_server->hasArg(current->getId()))
           {
             // -- Value from previous submit
-            pitem.replace("{v}", this->_server->arg(current->getId()));
+            value = this->_server->arg(current->getId());
           }
           else
           {
             // -- Value from config
-            pitem.replace("{v}", current->valueBuffer);
+            value = current->valueBuffer;
+          }
+          pitem.replace("{v}", value);
+          if (strcmp("select", current->type) == 0)
+          {
+            pitem.replace("{o}", htmlFormatProvider->getOptions(current->optionNames, current->optionValues, value));
           }
           pitem.replace(
               "{c}", current->customHtml == NULL ? "" : current->customHtml);

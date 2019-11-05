@@ -9,7 +9,10 @@ WebConfig::WebConfig(TFT_eSPI *tft, std::function<void(Config)> wifiConnected) {
   this->iotWebConf = new IotWebConf("AQI LCD", this->dnsServer, this->server, NULL, CONFIG_VERSION);
 
   this->sensorUrlParam = new IotWebConfParameter("Sensor URL", "sensorUrl", this->sensorUrl, 512);
-  this->sensorTypeParam = new IotWebConfParameter("Sensor type", "sensorType", this->sensorType, 16, "text", "AQI_ECO or LOCAL_DEVICE", "AQI_ECO");
+
+  String sensorTypeNames[] = {"aqi.eco", "local device"};
+  String sensorTypeValues[] = {"AQI_ECO", "LOCAL_DEVICE"};
+  this->sensorTypeParam = new IotWebConfParameter("Sensor type", "sensorType", this->sensorType, 16, "select", sensorTypeNames, sensorTypeValues, "AQI_ECO");
   this->timezoneOffsetParam = new IotWebConfParameter("Timezone offset (hours)", "timezoneOffset", this->timezoneOffset, 5, "number", NULL, "1", "min=\"-12\" max=\"12\"");
   this->iotWebConf->addParameter(this->sensorUrlParam);
   this->iotWebConf->addParameter(this->sensorTypeParam);

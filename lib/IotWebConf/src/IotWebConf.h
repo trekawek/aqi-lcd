@@ -62,12 +62,13 @@
 
 // -- HTML page fragments
 const char IOTWEBCONF_HTML_HEAD[] PROGMEM         = "<!DOCTYPE html><html lang=\"en\"><head><meta name=\"viewport\" content=\"width=device-width, initial-scale=1, user-scalable=no\"/><title>{v}</title>";
-const char IOTWEBCONF_HTML_STYLE_INNER[] PROGMEM  = ".de{background-color:#ffaaaa;} .em{font-size:0.8em;color:#bb0000;padding-bottom:0px;} .c{text-align: center;} div,input{padding:5px;font-size:1em;} input{width:95%;} body{text-align: center;font-family:verdana;} button{border:0;border-radius:0.3rem;background-color:#16A1E7;color:#fff;line-height:2.4rem;font-size:1.2rem;width:100%;} fieldset{border-radius:0.3rem;margin: 0px;}";
+const char IOTWEBCONF_HTML_STYLE_INNER[] PROGMEM  = ".de{background-color:#ffaaaa;} .em{font-size:0.8em;color:#bb0000;padding-bottom:0px;} .c{text-align: center;} div,input,select{padding:5px;font-size:1em;} input,select{width:95%;} body{text-align: center;font-family:verdana;} button{border:0;border-radius:0.3rem;background-color:#16A1E7;color:#fff;line-height:2.4rem;font-size:1.2rem;width:100%;} fieldset{border-radius:0.3rem;margin: 0px;}";
 const char IOTWEBCONF_HTML_SCRIPT_INNER[] PROGMEM = "function c(l){document.getElementById('s').value=l.innerText||l.textContent;document.getElementById('p').focus();}";
 const char IOTWEBCONF_HTML_HEAD_END[] PROGMEM     = "</head><body>";
 const char IOTWEBCONF_HTML_BODY_INNER[] PROGMEM   = "<div style='text-align:left;display:inline-block;min-width:260px;'>";
 const char IOTWEBCONF_HTML_FORM_START[] PROGMEM   = "<form action='' method='post'><fieldset><input type='hidden' name='iotSave' value='true'>";
 const char IOTWEBCONF_HTML_FORM_PARAM[] PROGMEM   = "<div class='{s}'><label for='{i}'>{b}</label><input type='{t}' id='{i}' name='{i}' maxlength={l} placeholder='{p}' value='{v}' {c}/><div class='em'>{e}</div></div>";
+const char IOTWEBCONF_HTML_FORM_SELECT[] PROGMEM   = "<div class='{s}'><label for='{i}'>{b}</label><select id='{i}' name='{i}' placeholder='{p}' {c}>{o}</select><div class='em'>{e}</div></div>";
 const char IOTWEBCONF_HTML_FORM_END[] PROGMEM     = "</fieldset><button type='submit'>Apply</button></form>";
 const char IOTWEBCONF_HTML_SAVED[] PROGMEM        = "<div>Condiguration saved<br />Return to <a href='/'>home page</a>.</div>";
 const char IOTWEBCONF_HTML_END[] PROGMEM          = "</div></body></html>";
@@ -140,6 +141,11 @@ public:
       const char* id, char* valueBuffer, int length, const char* customHtml,
       const char* type = "text");
 
+  IotWebConfParameter(
+    const char* label, const char* id, char* valueBuffer, int length,
+    const char* type, const String* optionNames, const String* optionValues,
+    const char* defaultValue = NULL);
+
   /**
    * For internal use only.
    */
@@ -153,6 +159,8 @@ public:
   const char* customHtml;
   boolean visible;
   const char* errorMessage;
+  const String* optionNames;
+  const String* optionValues;
 
   // -- For internal use only
   IotWebConfParameter* _nextParameter = NULL;
@@ -191,7 +199,33 @@ public:
   virtual String getHeadExtension() { return ""; }
   virtual String getHeadEnd() { return String(FPSTR(IOTWEBCONF_HTML_HEAD_END)) + getBodyInner(); }
   virtual String getFormStart() { return FPSTR(IOTWEBCONF_HTML_FORM_START); }
-  virtual String getFormParam(const char* type) { return FPSTR(IOTWEBCONF_HTML_FORM_PARAM); }
+  virtual String getFormParam(const char* type)
+  {
+    if (strcmp("select", type) == 0) {
+      return FPSTR(IOTWEBCONF_HTML_FORM_SELECT);
+    } else {
+      return FPSTR(IOTWEBCONF_HTML_FORM_PARAM);
+    }
+  }
+  virtual String getOptions(const String* names, const String* values, const String selectedValue)
+  {
+    String options;
+    for (int i = 0; names[i].length() > 0 && values[i].length() > 0; i++) {
+      options += "<option value=\"" + values[i] + "\"";
+      if (values[i] == selectedValue) {
+        options += " selected>";
+      } else {
+        options += ">";
+      }
+      options += names[i];
+      options += "</option>";
+    }
+#ifdef IOTWEBCONF_DEBUG_TO_SERIAL
+      Serial.print("Option string: ");
+      Serial.println(options);
+#endif
+    return options;
+  }
   virtual String getFormEnd() { return FPSTR(IOTWEBCONF_HTML_FORM_END); }
   virtual String getFormSaved() { return FPSTR(IOTWEBCONF_HTML_SAVED); }
   virtual String getEnd() { return FPSTR(IOTWEBCONF_HTML_END); }
