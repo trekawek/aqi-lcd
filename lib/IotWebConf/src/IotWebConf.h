@@ -586,6 +586,8 @@ private:
   static boolean connectAp(const char* apName, const char* password);
   static void connectWifi(const char* ssid, const char* password);
   static IotWebConfWifiAuthInfo* handleConnectWifiFailure();
+
+  String *getWifiNetworks();
 };
 
 #endif

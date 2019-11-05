@@ -40,6 +40,7 @@ IotWebConfParameter::IotWebConfParameter(
   this->defaultValue = defaultValue;
   this->customHtml = customHtml;
   this->visible = visible;
+  this->errorMessage = NULL;
 }
 IotWebConfParameter::IotWebConfParameter(
     const char* id, char* valueBuffer, int length, const char* customHtml,
@@ -98,7 +99,8 @@ IotWebConf::IotWebConf(
 
   this->_thingNameParameter = IotWebConfParameter("Thing name", "iwcThingName", this->_thingName, IOTWEBCONF_WORD_LEN);
   this->_apPasswordParameter = IotWebConfParameter("AP password", "iwcApPassword", this->_apPassword, IOTWEBCONF_WORD_LEN, "password");
-  this->_wifiSsidParameter = IotWebConfParameter("WiFi SSID", "iwcWifiSsid", this->_wifiSsid, IOTWEBCONF_WORD_LEN);
+  String *wifiNetworks = this->getWifiNetworks();
+  this->_wifiSsidParameter = IotWebConfParameter("WiFi SSID", "iwcWifiSsid", this->_wifiSsid, IOTWEBCONF_WORD_LEN, "select", wifiNetworks, wifiNetworks);
   this->_wifiPasswordParameter = IotWebConfParameter("WiFi password", "iwcWifiPassword", this->_wifiPassword, IOTWEBCONF_WORD_LEN, "password");
   this->_apTimeoutParameter = IotWebConfParameter("Startup delay (seconds)", "iwcApTimeout", this->_apTimeoutStr, IOTWEBCONF_WORD_LEN, "number", NULL, NULL, "min='1' max='600'", false);
   this->addParameter(&this->_thingNameParameter);
@@ -1138,4 +1140,21 @@ void IotWebConf::connectWifi(const char* ssid, const char* password)
 IotWebConfWifiAuthInfo* IotWebConf::handleConnectWifiFailure()
 {
   return NULL;
+}
+String* IotWebConf::getWifiNetworks()
+{
+#ifdef IOTWEBCONF_DEBUG_TO_SERIAL
+  Serial.println("Scanning wifi networks");
+#endif
+  int n = WiFi.scanNetworks();
+  String* networks = new String[n + 1];
+  for (int i = 0; i < n; i++) {
+    networks[i] = WiFi.SSID(i);
+#ifdef IOTWEBCONF_DEBUG_TO_SERIAL
+  Serial.print("- ");
+  Serial.println(networks[i]);
+#endif
+  }
+  networks[n] = "";
+  return networks;
 }
