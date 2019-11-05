@@ -1,0 +1,40 @@
+{
+    "name": "IotWebConf", 
+    "version": "2.3.0", 
+    "keywords": [
+        "communication"
+    ], 
+    "description": "ESP8266/ESP32 non-blocking WiFi/AP web configuration.", 
+    "frameworks": [
+        "arduino"
+    ], 
+    "platforms": [
+        "espressif8266", 
+        "espressif32"
+    ], 
+    "authors": [
+        {
+            "email": "prampec+arduino@gmail.com", 
+            "url": null, 
+            "maintainer": true, 
+            "name": "Balazs Kelemen"
+        }
+    ], 
+    "repository": {
+        "type": "git", 
+        "url": "https://github.com/prampec/IotWebConf"
+    }, 
+    "homepage": null, 
+    "export": {
+        "include": null, 
+        "exclude": [
+            "extras", 
+            "docs", 
+            "tests", 
+            "test", 
+            "*.doxyfile", 
+            "*.pdf"
+        ]
+    }, 
+    "id": 5676
+}
