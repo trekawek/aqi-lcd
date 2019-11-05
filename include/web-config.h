@@ -38,6 +38,8 @@ class WebConfig {
   IotWebConf *iotWebConf;
 
   IotWebConfParameter *sensorUrlParam;
+  static const String SENSOR_TYPE_NAMES[];
+  static const String SENSOR_TYPE_VALUES[];
   IotWebConfParameter *sensorTypeParam;
   IotWebConfParameter *timezoneOffsetParam;
 

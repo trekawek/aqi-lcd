@@ -1,5 +1,8 @@
 #include "web-config.h"
 
+const String WebConfig::SENSOR_TYPE_NAMES[] = {"aqi.eco", "local device", ""};
+const String WebConfig::SENSOR_TYPE_VALUES[] = {"AQI_ECO", "LOCAL_DEVICE", ""};
+
 WebConfig::WebConfig(TFT_eSPI *tft, std::function<void(Config)> wifiConnected) {
   this->tft = tft;
   this->tft->println("Initializing device...");
@@ -9,10 +12,7 @@ WebConfig::WebConfig(TFT_eSPI *tft, std::function<void(Config)> wifiConnected) {
   this->iotWebConf = new IotWebConf("AQI LCD", this->dnsServer, this->server, NULL, CONFIG_VERSION);
 
   this->sensorUrlParam = new IotWebConfParameter("Sensor URL", "sensorUrl", this->sensorUrl, 512);
-
-  String sensorTypeNames[] = {"aqi.eco", "local device"};
-  String sensorTypeValues[] = {"AQI_ECO", "LOCAL_DEVICE"};
-  this->sensorTypeParam = new IotWebConfParameter("Sensor type", "sensorType", this->sensorType, 16, "select", sensorTypeNames, sensorTypeValues, "AQI_ECO");
+  this->sensorTypeParam = new IotWebConfParameter("Sensor type", "sensorType", this->sensorType, 16, "select", SENSOR_TYPE_NAMES, SENSOR_TYPE_VALUES, "AQI_ECO");
   this->timezoneOffsetParam = new IotWebConfParameter("Timezone offset (hours)", "timezoneOffset", this->timezoneOffset, 5, "number", NULL, "1", "min=\"-12\" max=\"12\"");
   this->iotWebConf->addParameter(this->sensorUrlParam);
   this->iotWebConf->addParameter(this->sensorTypeParam);
