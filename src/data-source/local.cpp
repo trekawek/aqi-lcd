@@ -18,7 +18,7 @@ LocalDataSource::LocalDataSource(String url) {
 boolean LocalDataSource::readModel(JsonModel *model) {
   boolean result = false;
   HTTPClient http;
-  Serial.print("[HTTP] Begin...\n");
+  Serial.println("[HTTP] Begin...");
   http.begin(url);
   int httpCode = 0;
   while (true) {
@@ -28,7 +28,7 @@ boolean LocalDataSource::readModel(JsonModel *model) {
     }
     delay(1000);
   }
-  Serial.printf("[HTTP] Response code: %d\n", httpCode);
+  Serial.printf("[HTTP] Response code: %d\r\n", httpCode);
   
   String body = http.getString();
 

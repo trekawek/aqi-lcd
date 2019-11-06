@@ -16,7 +16,7 @@ boolean AqiEcoDataSource::readModel(JsonModel *model) {
   HTTPClient http;
   http.begin(*client, this->url);
   int httpCode = http.GET();
-  Serial.printf("[HTTP] Response code: %d\n", httpCode);
+  Serial.printf("[HTTP] Response code: %d\r\n", httpCode);
   if (httpCode > 0) {
     if (httpCode == HTTP_CODE_OK) {
       String body = http.getString();
