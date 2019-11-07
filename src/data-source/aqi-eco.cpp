@@ -4,14 +4,19 @@
 
 #include "data-source/aqi-eco.h"
 
-void getFromAqiEco(String url, JsonModel *model) {
+AqiEcoDataSource::AqiEcoDataSource(String url) {
+  this->url = url;
+}
+
+boolean AqiEcoDataSource::readModel(JsonModel *model) {
+  boolean result = false;
   std::unique_ptr<BearSSL::WiFiClientSecure>client(new BearSSL::WiFiClientSecure);
   client->setInsecure();
   
   HTTPClient http;
-  http.begin(*client, url);
+  http.begin(*client, this->url);
   int httpCode = http.GET();
-  Serial.printf("[HTTP] Response code: %d\n", httpCode);
+  Serial.printf("[HTTP] Response code: %d\r\n", httpCode);
   if (httpCode > 0) {
     if (httpCode == HTTP_CODE_OK) {
       String body = http.getString();
@@ -27,7 +32,9 @@ void getFromAqiEco(String url, JsonModel *model) {
       model->temp = average_1h["temperature"];
       model->humidity = average_1h["humidity"];
       model->pressure = average_1h["pressure"];
+      result = true;
     }
   }
   http.end();
+  return result;
 }
