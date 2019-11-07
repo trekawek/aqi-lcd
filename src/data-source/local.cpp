@@ -17,9 +17,10 @@ LocalDataSource::LocalDataSource(String url) {
 
 boolean LocalDataSource::readModel(JsonModel *model) {
   boolean result = false;
+  WiFiClient client;
   HTTPClient http;
   Serial.println("[HTTP] Begin...");
-  http.begin(url);
+  http.begin(client, url);
   int httpCode = 0;
   while (true) {
     httpCode = http.GET();
