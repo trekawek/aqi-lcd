@@ -21,7 +21,10 @@ WebConfig::WebConfig(TFT_eSPI *tft, std::function<void(Config)> wifiConnected) {
   this->iotWebConf->setWifiConnectionCallback([wifiConnected, this]{
     Config config;
     this->setConfig(&config);
-    this->displayConfig();
+    if (this->displayLogs) {
+      this->displayConfig();
+      this->displayLogs = false;
+    }
     wifiConnected(config);
   });
   this->iotWebConf->setApConnectionHandler([this](const char* apName, const char* password){ return this->connectAp(apName, password); });
@@ -67,15 +70,19 @@ boolean WebConfig::formValidator() {
 }
 
 boolean WebConfig::connectAp(const char* apName, const char* password) {
-  this->tft->println("Creating access point");
-  this->tft->println("SSID:     " + String(apName));
-  this->tft->println("Password: " + String(password));
+  if (this->displayLogs) {
+    this->tft->println("Creating access point");
+    this->tft->println("SSID:     " + String(apName));
+    this->tft->println("Password: " + String(password));
+  }
   return WiFi.softAP(apName, password);
 }
 
 void WebConfig::connectWifi(const char* ssid, const char* password) {
-  this->tft->print("Connecting to WiFi ");
-  this->tft->println(ssid);
+  if (this->displayLogs) {
+    this->tft->print("Connecting to WiFi ");
+    this->tft->println(ssid);
+  }
   WiFi.begin(ssid, password);
 }
 

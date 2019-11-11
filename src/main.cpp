@@ -22,6 +22,9 @@ TouchInterface *touchInterface;
 WifiStatus *wifiStatus;
 
 void wifiConnected(Config config) {
+  if (connected) {
+    return;
+  }
   tft->fillScreen(0);
   displayClock = new DisplayClock(tft, config.timeZoneOffset);
   dataSource = DataSource::createDataSource(config.sensorType, config.sensorUrl);

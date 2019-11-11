@@ -42,6 +42,7 @@ class WebConfig {
   static const String SENSOR_TYPE_VALUES[];
   IotWebConfParameter *sensorTypeParam;
   IotWebConfParameter *timezoneOffsetParam;
+  boolean displayLogs = true;
 
   boolean formValidator();
   boolean connectAp(const char* apName, const char* password);
