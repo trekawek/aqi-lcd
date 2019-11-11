@@ -180,7 +180,7 @@ void Interface::drawBitmap(uint16_t x, uint16_t y, const tImage *image) {
   const uint16_t *pdata = image->data;
   for (y0 = 0; y0 < image->height; y0++) {
     for (x0 = 0; x0 < image->width; x0++) {
-      this->tft->drawPixel(x + x0, y + y0, *pdata++);
+      this->tft->drawPixel(x + x0, y + y0, pgm_read_byte(pdata++));
     }
   }
 }

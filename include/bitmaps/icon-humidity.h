@@ -30,7 +30,7 @@
 
 
 
-static const uint16_t image_data_iconhumidity[800] = {
+static const uint16_t image_data_iconhumidity[800] PROGMEM = {
     // ∙∙∙∙∙∙∙∙∙∙∙░░∙∙∙∙∙∙∙∙∙∙∙∙
     // ∙∙∙∙∙∙∙∙∙∙░░░░∙∙∙∙∙∙∙∙∙∙∙
     // ∙∙∙∙∙∙∙∙∙░░░░░░∙∙∙∙∙∙∙∙∙∙

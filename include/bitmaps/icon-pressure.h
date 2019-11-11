@@ -30,7 +30,7 @@
 
 
 
-static const uint16_t image_data_iconpressure[750] = {
+static const uint16_t image_data_iconpressure[750] PROGMEM = {
     // ∙∙∙∙∙∙∙∙∙∙░░░░░∙∙∙∙∙∙∙∙∙∙
     // ∙∙∙∙∙∙∙░░░░░░░░░░░∙∙∙∙∙∙∙
     // ∙∙∙∙∙░░░░░░░░░░░░░░∙∙∙∙∙∙

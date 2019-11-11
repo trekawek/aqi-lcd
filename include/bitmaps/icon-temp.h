@@ -30,7 +30,7 @@
 
 
 
-static const uint16_t image_data_icontemp[629] = {
+static const uint16_t image_data_icontemp[629] PROGMEM = {
     // ∙∙∙∙∙∙∙░░░∙∙∙∙∙∙∙
     // ∙∙∙∙∙░░░░░░░∙∙∙∙∙
     // ∙∙∙∙░░░░░░░░░∙∙∙∙
