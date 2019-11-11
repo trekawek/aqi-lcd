@@ -2,6 +2,7 @@
 #define _LOCAL_DATA_SOURCE_H
 
 #include <Arduino.h>
+#include <ArduinoJson.h>
 #include "model.h"
 #include "data-source.h"
 
@@ -18,6 +19,8 @@ class LocalDataSource : public DataSource {
     static const String PRESSURE_VALUES[];
 
     static boolean inArray(const String array[], String str);
+    
+    DynamicJsonDocument *doc;
 };
 
 #endif

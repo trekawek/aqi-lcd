@@ -1,18 +1,18 @@
 #include <ESP8266HTTPClient.h>
-#include <WiFiClientSecureBearSSL.h>
-#include <ArduinoJson.h>
 
 #include "data-source/aqi-eco.h"
 
 AqiEcoDataSource::AqiEcoDataSource(String url) {
   this->url = url;
+  client = new BearSSL::WiFiClientSecure();
+  client->setInsecure();
+
+  const size_t capacity = JSON_OBJECT_SIZE(3) + JSON_OBJECT_SIZE(8) + 2*JSON_OBJECT_SIZE(9);
+  doc = new DynamicJsonDocument(capacity);
 }
 
 boolean AqiEcoDataSource::readModel(JsonModel *model) {
   boolean result = false;
-  std::unique_ptr<BearSSL::WiFiClientSecure>client(new BearSSL::WiFiClientSecure);
-  client->setInsecure();
-  
   HTTPClient http;
   http.begin(*client, this->url);
   int httpCode = http.GET();
@@ -21,11 +21,9 @@ boolean AqiEcoDataSource::readModel(JsonModel *model) {
     if (httpCode == HTTP_CODE_OK) {
       String body = http.getString();
 
-      const size_t capacity = JSON_OBJECT_SIZE(3) + JSON_OBJECT_SIZE(8) + 2*JSON_OBJECT_SIZE(9);
-      DynamicJsonDocument doc(capacity);
-      deserializeJson(doc, body);
+      deserializeJson(*doc, body);
 
-      JsonObject average_1h = doc["average_1h"];
+      JsonObject average_1h = (*doc)["average_1h"];
       
       model->pm25 = average_1h["pm25"];
       model->pm10 = average_1h["pm10"];

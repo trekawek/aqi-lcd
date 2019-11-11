@@ -1,7 +1,6 @@
 #include <Arduino.h>
 #include <ESP8266HTTPClient.h>
 #include <WiFiClientSecureBearSSL.h>
-#include <ArduinoJson.h>
 
 #include "data-source/local.h"
 
@@ -13,6 +12,8 @@ const String LocalDataSource::PRESSURE_VALUES[] = { "BME280_pressure", "BMP_pres
 
 LocalDataSource::LocalDataSource(String url) {
   this->url = url;
+  const size_t capacity = JSON_ARRAY_SIZE(15) + 15*JSON_OBJECT_SIZE(2) + JSON_OBJECT_SIZE(3) + 490;
+  doc = new DynamicJsonDocument(capacity);
 }
 
 boolean LocalDataSource::readModel(JsonModel *model) {
@@ -33,11 +34,9 @@ boolean LocalDataSource::readModel(JsonModel *model) {
   
   String body = http.getString();
 
-  const size_t capacity = JSON_ARRAY_SIZE(15) + 15*JSON_OBJECT_SIZE(2) + JSON_OBJECT_SIZE(3) + 490;
-  DynamicJsonDocument doc(capacity);
-  deserializeJson(doc, body);
+  deserializeJson(*doc, body);
 
-  JsonArray sensordatavalues = doc["sensordatavalues"];
+  JsonArray sensordatavalues = (*doc)["sensordatavalues"];
   for (auto value : sensordatavalues) {
     JsonObject o = value.as<JsonObject>();
     String n = o["value_type"];
