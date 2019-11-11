@@ -36,7 +36,7 @@ void wifiConnected(Config config) {
 }
 
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200);
   Serial.println("AQI LCD is starting!");
   tft->begin();
   tft->setRotation(0);
