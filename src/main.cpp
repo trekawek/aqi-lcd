@@ -3,6 +3,7 @@
 #include <TFT_eSPI.h>
 
 #include "data-source.h"
+#include "data-source-status.h"
 #include "display-clock.h"
 #include "fetcher.h"
 #include "interface.h"
@@ -29,7 +30,7 @@ void wifiConnected(Config config) {
   displayClock = new DisplayClock(tft, config.timeZoneOffset);
   dataSource = DataSource::createDataSource(config.sensorType, config.sensorUrl);
   interface = new Interface(tft);
-  fetcher = new Fetcher(interface, dataSource);
+  fetcher = new Fetcher(interface, dataSource, new DataSourceStatus(tft));
   touchInterface = new TouchInterface(tft, interface);
   wifiStatus = new WifiStatus(tft);
   connected = true;
@@ -50,6 +51,6 @@ void loop(void) {
     boolean dataReceived = fetcher->update();
     displayClock->update();
     touchInterface->update();
-    wifiStatus->update(dataReceived);
+    wifiStatus->update();
   }
 }

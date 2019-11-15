@@ -8,7 +8,7 @@
 class WifiStatus {
     public:
     WifiStatus(TFT_eSPI *tft);
-    void update(boolean dataReceived);
+    void update();
 
     private:
     TFT_eSPI *tft;
