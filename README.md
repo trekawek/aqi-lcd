@@ -3,6 +3,7 @@
 This is a simple app for the Wemos-based TFT display, presenting the pollution level:
 
 ![](docs/photo.jpg)
+(photo: [nettigo.pl](https://nettigo.pl/products/plytka-pcb-ekran-dotykowy-z-wifi-i-karta-sd-do-wemos-d1-mini))
 
 ## Configuration
 
