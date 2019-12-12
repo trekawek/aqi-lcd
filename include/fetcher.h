@@ -2,22 +2,19 @@
 #define _FETCHER_H
 
 #include <Arduino.h>
-#include <TFT_eSPI.h>
 
 #include "data-source.h"
-#include "data-source-status.h"
-#include "interface.h"
+#include "frontend.h"
 #include "model.h"
 
 class Fetcher {
     public:
-    Fetcher(Interface *interface, DataSource *dataSource, DataSourceStatus *dataSourceStatus);
+    Fetcher(Frontend *frontend, DataSource *dataSource);
     boolean update();
 
     private:
-    Interface *interface;
     DataSource *dataSource;
-    DataSourceStatus *dataSourceStatus;
+    Frontend *frontend;
     long lastDisplayUpdate = -60 * 1000;
 
     static void createDisplayModel(JsonModel *json, DisplayModel *displayModel);

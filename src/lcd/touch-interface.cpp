@@ -1,4 +1,5 @@
-#include "touch-interface.h"
+#if FRONTEND_LCD
+#include "lcd/touch-interface.h"
 
 TouchInterface::TouchInterface(TFT_eSPI *tft, Interface *interface) {
   this->tft = tft;
@@ -16,3 +17,4 @@ void TouchInterface::update() {
     touchDisplayed = false;
   }
 }
+#endif

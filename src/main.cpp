@@ -1,56 +1,46 @@
 #include <Arduino.h>
-#include <SPI.h>
-#include <TFT_eSPI.h>
 
 #include "data-source.h"
-#include "data-source-status.h"
-#include "display-clock.h"
 #include "fetcher.h"
-#include "interface.h"
-#include "touch-interface.h"
+#include "frontend.h"
 #include "web-config.h"
-#include "wifi-status.h"
 
 boolean connected = false;
-
-TFT_eSPI *tft = new TFT_eSPI();
-DisplayClock *displayClock;
-Interface *interface;
 DataSource *dataSource;
-Fetcher *fetcher;
 WebConfig *webConfig;
-TouchInterface *touchInterface;
-WifiStatus *wifiStatus;
+Fetcher *fetcher;
+
+#if FRONTEND_LCD
+#include "lcd/lcd-frontend.h"
+Frontend *frontend = new LcdFrontend();
+#elif FRONTEND_LED
+#include "led/led-frontend.h"
+Frontend *frontend = new LedFrontend();
+#else
+#error "Either FRONTEND_LCD or FRONTEND_LED should be set"
+#endif
 
 void wifiConnected(Config config) {
   if (connected) {
     return;
   }
-  tft->fillScreen(0);
-  displayClock = new DisplayClock(tft, config.timeZoneOffset);
   dataSource = DataSource::createDataSource(config.sensorType, config.sensorUrl);
-  interface = new Interface(tft);
-  fetcher = new Fetcher(interface, dataSource, new DataSourceStatus(tft));
-  touchInterface = new TouchInterface(tft, interface);
-  wifiStatus = new WifiStatus(tft);
+  fetcher = new Fetcher(frontend, dataSource);
+  frontend->connected(config, dataSource);
   connected = true;
 }
 
 void setup() {
   Serial.begin(115200);
   Serial.println("AQI LCD is starting!");
-  tft->begin();
-  tft->setRotation(0);
-  tft->fillScreen(0);
-  webConfig = new WebConfig(tft, &wifiConnected);
+  frontend->init();
+  webConfig = new WebConfig(frontend, &wifiConnected);
 }
 
 void loop(void) {
   webConfig->update();
   if (connected) {
     fetcher->update();
-    displayClock->update();
-    touchInterface->update();
-    wifiStatus->update();
+    frontend->doLoop();
   }
 }

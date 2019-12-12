@@ -1,12 +1,13 @@
+#if FRONTEND_LCD
 #include <Arduino.h>
 
-#include "interface.h"
+#include "lcd/interface.h"
 
-#include "bitmaps/icon-humidity.h"
-#include "bitmaps/icon-pm10.h"
-#include "bitmaps/icon-pm25.h"
-#include "bitmaps/icon-pressure.h"
-#include "bitmaps/icon-temp.h"
+#include "lcd/bitmaps/icon-humidity.h"
+#include "lcd/bitmaps/icon-pm10.h"
+#include "lcd/bitmaps/icon-pm25.h"
+#include "lcd/bitmaps/icon-pressure.h"
+#include "lcd/bitmaps/icon-temp.h"
 
 #define INDICATOR_RADIUS 4
 #define INDICATOR_LENGTH 40
@@ -215,3 +216,4 @@ uint16 Interface::mixColors(uint16_t c1, uint16_t c2, float f) {
 boolean Interface::isDifferent(float f1, float f2) {
   return fabs(f1 - f2) > 0.001;
 }
+#endif

@@ -1,5 +1,6 @@
-#include "display-clock.h"
-#include "interface.h"
+#if FRONTEND_LCD
+#include "lcd/display-clock.h"
+#include "lcd/interface.h"
 
 DisplayClock::DisplayClock(TFT_eSPI *tft, int timezoneOffset) {
   this->ntpUDP = new WiFiUDP();
@@ -24,3 +25,4 @@ void DisplayClock::drawTime(String time) {
   tft->setFreeFont(&FreeSans9pt7b);
   tft->print(time);
 }
+#endif

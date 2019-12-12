@@ -1,4 +1,5 @@
-#include "wifi-status.h"
+#if FRONTEND_LCD
+#include "lcd/wifi-status.h"
 
 WifiStatus::WifiStatus(TFT_eSPI *tft) {
   this->tft = tft;
@@ -19,3 +20,4 @@ void WifiStatus::update() {
   this->previousLevel = level;
   this->lastUpdate = millis();
 }
+#endif

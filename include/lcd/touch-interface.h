@@ -1,9 +1,10 @@
-#ifndef _TOUCH_INTERFACE_H
-#define _TOUCH_INTERFACE_H
+#if FRONTEND_LCD
+#ifndef _LCD_TOUCH_INTERFACE_H
+#define _LCD_TOUCH_INTERFACE_H
 
 #include <TFT_eSPI.h>
 
-#include "interface.h"
+#include "lcd/interface.h"
 
 class TouchInterface {
   public:
@@ -16,4 +17,5 @@ class TouchInterface {
   boolean touchDisplayed;
 };
 
+#endif
 #endif

@@ -3,9 +3,9 @@
 const String WebConfig::SENSOR_TYPE_NAMES[] = {"aqi.eco", "local device", ""};
 const String WebConfig::SENSOR_TYPE_VALUES[] = {"AQI_ECO", "LOCAL_DEVICE", ""};
 
-WebConfig::WebConfig(TFT_eSPI *tft, std::function<void(Config)> wifiConnected) {
-  this->tft = tft;
-  this->tft->println("Initializing device...");
+WebConfig::WebConfig(Frontend *frontend, std::function<void(Config)> wifiConnected) {
+  this->frontend = frontend;
+  this->frontend->println("Initializing device...");
 
   this->dnsServer = new DNSServer();
   this->server = new WebServer(80);
@@ -71,17 +71,17 @@ boolean WebConfig::formValidator() {
 
 boolean WebConfig::connectAp(const char* apName, const char* password) {
   if (this->displayLogs) {
-    this->tft->println("Creating access point");
-    this->tft->println("SSID:     " + String(apName));
-    this->tft->println("Password: " + String(password));
+    this->frontend->println("Creating access point");
+    this->frontend->println("SSID:     " + String(apName));
+    this->frontend->println("Password: " + String(password));
   }
   return WiFi.softAP(apName, password);
 }
 
 void WebConfig::connectWifi(const char* ssid, const char* password) {
   if (this->displayLogs) {
-    this->tft->print("Connecting to WiFi ");
-    this->tft->println(ssid);
+    this->frontend->print("Connecting to WiFi ");
+    this->frontend->println(ssid);
   }
   WiFi.begin(ssid, password);
 }
@@ -109,15 +109,15 @@ void WebConfig::setConfig(Config *config) {
 }
 
 void WebConfig::displayConfig() {
-  this->tft->print("Local IP:         ");
-  this->tft->println(WiFi.localIP());
+  this->frontend->print("Local IP:         ");
+  this->frontend->println(WiFi.localIP().toString());
 
-  this->tft->print("Sensor type:      ");
-  this->tft->println(this->sensorType);
-  this->tft->println("Sensor URL:");
-  this->tft->println(this->sensorUrl);
-  this->tft->print("Timezeone offset: ");
-  this->tft->println(this->timezoneOffset);
+  this->frontend->print("Sensor type:      ");
+  this->frontend->println(this->sensorType);
+  this->frontend->println("Sensor URL:");
+  this->frontend->println(this->sensorUrl);
+  this->frontend->print("Timezeone offset: ");
+  this->frontend->println(this->timezoneOffset);
 
   delay(1000 * 2);
 }
