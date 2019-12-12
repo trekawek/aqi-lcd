@@ -5,7 +5,7 @@ DataSourceStatus::DataSourceStatus(TFT_eSPI *tft) {
 }
 
 void DataSourceStatus::update(DataSourceStatusType status) {
-  uint32_t color;
+  uint32_t color = TFT_BLACK;
   switch (status) {
     case SUCCESS:
     color = TFT_GREEN;
