@@ -48,7 +48,7 @@ void setup() {
 void loop(void) {
   webConfig->update();
   if (connected) {
-    boolean dataReceived = fetcher->update();
+    fetcher->update();
     displayClock->update();
     touchInterface->update();
     wifiStatus->update();
