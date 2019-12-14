@@ -1,6 +1,6 @@
 # AQI LCD
 
-This is a simple app for the Wemos-based TFT display, presenting the pollution level:
+This is an app for the Wemos-based TFT display, presenting the pollution level:
 
 ![](docs/photo.jpg)
 (photo: [nettigo.pl](https://nettigo.pl/products/plytka-pcb-ekran-dotykowy-z-wifi-i-karta-sd-do-wemos-d1-mini))
@@ -29,3 +29,19 @@ pio run -t upload -e lcd
 ## Hardware
 
 Hardware is available at the Nettigo's website: https://nettigo.pl/products/plytka-pcb-ekran-dotykowy-z-wifi-i-karta-sd-do-wemos-d1-mini
+
+## Neopixel LED frontend
+
+AQI-LCD can be build in an alternative mode, in which the WS2812-based LED driver is used to display the pollution level:
+
+```
+pio run -t upload -e led
+```
+
+By default it assumes that a 60-LED strip is connected to the `D4` pin on Wemos. It can be configured with the build flags set in the [platformio.ini](platformio.ini):
+
+```
+  -DLED_COUNT=60  # how many LEDs (ring=16, stripe=60)
+  -DLED_PIN=2     # D4 on wemost
+  -DBRIGHTNESS=25 # max: 255
+```
