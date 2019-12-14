@@ -28,6 +28,12 @@ class LedFrontend : public Frontend {
     void unpack(uint32_t color, uint8_t *colors);
     uint32_t pack(uint8_t *colors);
     uint32_t mixColors(uint32_t c1, uint32_t c2, float f);
+
+    uint16_t currentLedIndex = -1;
+    uint32_t currentLedColor = -1;
+
+    uint32_t lastBlinkTime = 0;
+    bool blinkStatus = false;
 };
 
 #endif

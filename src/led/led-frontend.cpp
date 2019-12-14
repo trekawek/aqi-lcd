@@ -12,6 +12,7 @@ void LedFrontend::init() {
   strip->begin();
   strip->show();
   strip->setBrightness(BRIGHTNESS);
+
 }
 
 void LedFrontend::connected(Config config, DataSource *dataSource) {
@@ -20,22 +21,27 @@ void LedFrontend::connected(Config config, DataSource *dataSource) {
 }
 
 void LedFrontend::doLoop() {
+  if ((millis() - lastBlinkTime) > 100) {
+    strip->setPixelColor(currentLedIndex, blinkStatus ? currentLedColor : 0);
+    strip->show();
+
+    lastBlinkTime = millis();
+    blinkStatus = blinkStatus;
+  }
 }
 
 void LedFrontend::updateDisplayModel(DisplayModel *displayModel) {
   uint32_t colors[] = {0x008200, 0x00ff00, 0xffff00, 0xffae29, 0xff2d19, 0x940000};
   float j;
   for (int i = 1; i < strip->numPixels(); i++) {
-    j = ((float) i) / strip->numPixels();
-    if (j < displayModel->level) {
-      j *= 5.0;
-      uint32_t c = mixColors(colors[(int) j], colors[(int) j + 1], j - ((int) j));
-      strip->setPixelColor(i, c);
-    } else {
-      strip->setPixelColor(i, 0);
-    }
+    j = 5.0 * ((float) i) / strip->numPixels();
+    uint32_t c = mixColors(colors[(int) j], colors[(int) j + 1], j - ((int) j));
+    strip->setPixelColor(i, c);
   }
   strip->show();
+
+  currentLedIndex = strip->numPixels() * displayModel->level;
+  currentLedColor = strip->getPixelColor(currentLedIndex);
 }
 
 void LedFrontend::updateDataSourceStatus(DataSourceStatus status) {
