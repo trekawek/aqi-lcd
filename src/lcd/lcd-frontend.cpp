@@ -15,7 +15,8 @@ void LcdFrontend::connected(Config config, DataSource *dataSource) {
   tft->fillScreen(0);
   displayClock = new DisplayClock(tft, config.timeZoneOffset);
   interface = new Interface(tft);
-  touchInterface = new TouchInterface(tft, interface);
+  backlight = new Backlight(config.backlightTime);
+  touchInterface = new TouchInterface(tft, interface, backlight);
   wifiStatus = new WifiStatus(tft);
 }
 

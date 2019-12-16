@@ -33,6 +33,7 @@ void wifiConnected(Config config) {
 void setup() {
   Serial.begin(115200);
   Serial.println("AQI LCD is starting!");
+  pinMode(D3, OUTPUT);
   frontend->init();
   webConfig = new WebConfig(frontend, &wifiConnected);
 }
