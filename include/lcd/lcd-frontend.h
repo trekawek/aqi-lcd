@@ -9,6 +9,7 @@
 #include "data-source.h"
 #include "frontend.h"
 
+#include "lcd/local-measure.h"
 #include "lcd/display-clock.h"
 #include "lcd/interface.h"
 #include "lcd/touch-interface.h"
@@ -32,6 +33,7 @@ class LcdFrontend : public Frontend {
     Interface *interface;
     TouchInterface *touchInterface;
     WifiStatus *wifiStatus;
+    LocalMeasure *localMeasure;
 };
 
 #endif

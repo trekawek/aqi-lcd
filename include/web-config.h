@@ -25,6 +25,7 @@ class WebConfig {
   char sensorUrl[512];
   char sensorType[16];
   char timezoneOffset[5];
+  char sensorAltitude[5];
 
   DoubleResetDetector *drd;
 
@@ -37,6 +38,7 @@ class WebConfig {
   static const String SENSOR_TYPE_VALUES[];
   IotWebConfParameter *sensorTypeParam;
   IotWebConfParameter *timezoneOffsetParam;
+  IotWebConfParameter *sensorAltitudeParam;
   boolean displayLogs = true;
 
   boolean formValidator();

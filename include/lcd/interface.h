@@ -5,6 +5,7 @@
 #include <TFT_eSPI.h>
 
 #include "model.h"
+#include "lcd/local-measure.h"
 
 typedef struct {
   const uint16_t *data;
@@ -15,11 +16,12 @@ typedef struct {
 
 class Interface {
   public:
-  Interface(TFT_eSPI *tft);
+  Interface(TFT_eSPI *tft, LocalMeasure *measure);
   void update(DisplayModel *model);
 
   void drawTouchPosition(uint16_t x, uint16_t y, uint16_t z);
   void clearTouchPosition();
+  LocalMeasure *measure;
 
   private:
   TFT_eSPI *tft;
