@@ -23,19 +23,22 @@ void LedFrontend::doLoop() {
 }
 
 void LedFrontend::updateDisplayModel(DisplayModel *displayModel) {
-  uint32_t colors[] = {0x008200, 0x00ff00, 0xffff00, 0xffae29, 0xff2d19, 0x940000};
-  float j;
+  uint16_t pixelLevel = displayModel->level * (strip->numPixels() - 1);
   for (int i = 1; i < strip->numPixels(); i++) {
-    j = ((float) i) / strip->numPixels();
-    if (j < displayModel->level) {
-      j *= 5.0;
-      uint32_t c = mixColors(colors[(int) j], colors[(int) j + 1], j - ((int) j));
+    if (i <= pixelLevel) {
+      uint32_t c = getColor(i);
       strip->setPixelColor(i, c);
     } else {
       strip->setPixelColor(i, 0);
     }
   }
   strip->show();
+}
+
+uint32_t LedFrontend::getColor(uint16_t ledIndex) {
+  uint32_t colors[] = {0x008200, 0x00ff00, 0xffff00, 0xffae29, 0xff2d19, 0x940000};
+  float rel = 5.0 * ((float) ledIndex) / strip->numPixels();
+  return mixColors(colors[(int) rel], colors[(int) rel + 1], rel - ((int) rel));
 }
 
 void LedFrontend::updateDataSourceStatus(DataSourceStatus status) {

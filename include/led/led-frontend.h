@@ -28,6 +28,7 @@ class LedFrontend : public Frontend {
     void unpack(uint32_t color, uint8_t *colors);
     uint32_t pack(uint8_t *colors);
     uint32_t mixColors(uint32_t c1, uint32_t c2, float f);
+    uint32_t getColor(uint16_t ledIndex);
 };
 
 #endif
