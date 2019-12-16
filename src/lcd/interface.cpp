@@ -9,6 +9,9 @@
 #include "lcd/bitmaps/icon-pressure.h"
 #include "lcd/bitmaps/icon-temp.h"
 
+#include "lcd/bitmaps/icon-indoor.h"
+#include "lcd/bitmaps/icon-outdoor.h"
+
 #define INDICATOR_RADIUS 4
 #define INDICATOR_LENGTH 40
 #define INDICATOR_COLOR 0x0339
@@ -80,7 +83,7 @@ void Interface::update(DisplayModel *model) {
   // temp
   if (this->initialDraw || isDifferent(this->previousModel.temp, model->temp)) {
     this->tft->setFreeFont(&FreeSans9pt7b);
-    this->tft->fillRect(55, y - 18, 95, offset - 15, TFT_BLACK);
+    this->tft->fillRect(55, y - 18, 75, offset - 15, TFT_BLACK);
     this->tft->setCursor(55, y);
     this->tft->print(model->temp);
     this->tft->print(" C");
@@ -100,7 +103,7 @@ void Interface::update(DisplayModel *model) {
   // humidity
   if (this->initialDraw || isDifferent(this->previousModel.humidity, model->humidity)) {
     this->tft->setFreeFont(&FreeSans9pt7b);
-    this->tft->fillRect(55, y - 18, 95, offset - 15, TFT_BLACK);
+    this->tft->fillRect(55, y - 18, 75, offset - 15, TFT_BLACK);
     this->tft->setCursor(55, y);
     this->tft->print(model->humidity);
     this->tft->print("%");
@@ -118,7 +121,7 @@ void Interface::update(DisplayModel *model) {
   // pressure
   if (this->initialDraw || isDifferent(this->previousModel.pressure, model->pressure)) {
     this->tft->setFreeFont(&FreeSans9pt7b);
-    this->tft->fillRect(55, y - 18, 95, offset - 15, TFT_BLACK);
+    this->tft->fillRect(55, y - 18, 75, offset - 15, TFT_BLACK);
     this->tft->setCursor(55, y);
     this->tft->print(model->pressure);
     this->tft->print("hPa");
@@ -139,7 +142,10 @@ void Interface::update(DisplayModel *model) {
     drawBitmap(7, y += offset + 15, &icontemp);
     drawBitmap(3, y += offset, &iconhumidity);
     drawBitmap(3, y += offset, &iconpressure);
+
     tft->fillRect(30, 195, 180, 2, INDICATOR_COLOR);
+    drawBitmap(35, 230, &iconoutdoor);
+    drawBitmap(130, 230, &iconindoor);
   }
   this->initialDraw = false;
   this->previousModel = *model;
