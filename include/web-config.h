@@ -42,6 +42,7 @@ class WebConfig {
   boolean formValidator();
   boolean connectAp(const char* apName, const char* password);
   void connectWifi(const char* ssid, const char* password);
+  const int32_t calcWiFiSignalQuality(int32_t rssi);
   void handleRoot();
   void setConfig(Config *config);
   void displayConfig();
