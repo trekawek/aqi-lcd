@@ -14,9 +14,11 @@ WebConfig::WebConfig(Frontend *frontend, std::function<void(Config)> wifiConnect
   this->sensorUrlParam = new IotWebConfParameter("Sensor URL", "sensorUrl", this->sensorUrl, 512);
   this->sensorTypeParam = new IotWebConfParameter("Sensor type", "sensorType", this->sensorType, 16, "select", SENSOR_TYPE_NAMES, SENSOR_TYPE_VALUES, "AQI_ECO");
   this->timezoneOffsetParam = new IotWebConfParameter("Timezone offset (hours)", "timezoneOffset", this->timezoneOffset, 5, "number", NULL, "1", "min=\"-12\" max=\"12\"");
+  this->backlightTimeParam = new IotWebConfParameter("Backlight time (seconds)", "backlightTime", this->backlightTime, 5, "number", NULL, "10", "min=\"0\" max=\"60\"");
   this->iotWebConf->addParameter(this->sensorUrlParam);
   this->iotWebConf->addParameter(this->sensorTypeParam);
   this->iotWebConf->addParameter(this->timezoneOffsetParam);
+  this->iotWebConf->addParameter(this->backlightTimeParam);
   this->iotWebConf->setFormValidator([this]{ return this->formValidator(); });
   this->iotWebConf->setWifiConnectionCallback([wifiConnected, this]{
     Config config;
@@ -66,6 +68,11 @@ boolean WebConfig::formValidator() {
     valid = false;
   }
 
+  if (this->server->arg(this->backlightTimeParam->getId()).length() == 0) {
+    this->backlightTimeParam->errorMessage = "Please provide backlight time or 0 for disable.";
+    valid = false;
+  }
+
   return valid;
 }
 
@@ -106,6 +113,7 @@ void WebConfig::setConfig(Config *config) {
     config->sensorType = LOCAL_DEVICE;
   }
   config->timeZoneOffset = String(this->timezoneOffset).toInt();
+  config->backlightTime = String(this->backlightTime).toInt();
 }
 
 void WebConfig::displayConfig() {
@@ -118,6 +126,8 @@ void WebConfig::displayConfig() {
   this->frontend->println(this->sensorUrl);
   this->frontend->print("Timezeone offset: ");
   this->frontend->println(this->timezoneOffset);
+  this->frontend->print("Backlight time: ");
+  this->frontend->println(this->backlightTime);
 
   delay(1000 * 2);
 }

@@ -8,13 +8,17 @@
 
 class TouchInterface {
   public:
-  TouchInterface(TFT_eSPI *tft, Interface *interface);
+  TouchInterface(TFT_eSPI *tft, Interface *interface, unsigned long backlightTime);
   void update();
+  void setBacklight(boolean backlight);
   
   private:
   TFT_eSPI *tft;
   Interface *interface;
   boolean touchDisplayed = false;
+  boolean displayTouch = false;
+  unsigned long lastUpdate = -60 * 1000;
+  unsigned long backlightTime = 10 * 1000;
 };
 
 #endif
