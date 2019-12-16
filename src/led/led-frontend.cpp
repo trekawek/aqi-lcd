@@ -36,9 +36,10 @@ void LedFrontend::updateDisplayModel(DisplayModel *displayModel) {
 }
 
 uint32_t LedFrontend::getColor(uint16_t ledIndex) {
-  uint32_t colors[] = {0x008200, 0x00ff00, 0xffff00, 0xffae29, 0xff2d19, 0x940000};
-  float rel = 5.0 * ((float) ledIndex) / strip->numPixels();
-  return mixColors(colors[(int) rel], colors[(int) rel + 1], rel - ((int) rel));
+  // hue range: ledIndex is mapped from (0, numPixels) to (140°, -20°)
+  int hue_deg = map(ledIndex, 0, strip->numPixels() - 1, 140, -20);
+  uint16_t hue = ((float) hue_deg ) / 360.0 * 65535;
+  return strip->gamma32(strip->ColorHSV(hue));
 }
 
 void LedFrontend::updateDataSourceStatus(DataSourceStatus status) {
