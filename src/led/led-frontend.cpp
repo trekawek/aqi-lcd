@@ -36,8 +36,8 @@ void LedFrontend::updateDisplayModel(DisplayModel *displayModel) {
 }
 
 uint32_t LedFrontend::getColor(uint16_t ledIndex) {
-  // hue range: ledIndex is mapped from (0, numPixels) to (140°, -20°)
-  int hue_deg = map(ledIndex, 0, strip->numPixels() - 1, 140, -20);
+  // hue range: ledIndex is mapped from (0, numPixels) to (100, 20°)
+  int hue_deg = map(ledIndex, 0, strip->numPixels() - 1, 100, 20);
   uint16_t hue = ((float) hue_deg ) / 360.0 * 65535;
   return strip->gamma32(strip->ColorHSV(hue));
 }
