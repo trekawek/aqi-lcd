@@ -86,12 +86,41 @@ void WebConfig::connectWifi(const char* ssid, const char* password) {
   WiFi.begin(ssid, password);
 }
 
+const int32_t WebConfig::calcWiFiSignalQuality(int32_t rssi) {
+  if (rssi > -50) {
+    rssi = -50;
+  }
+  if (rssi < -100) {
+    rssi = -100;
+  }
+  return (rssi + 100) * 2;
+}
+
 void WebConfig::handleRoot() {
   if (this->iotWebConf->handleCaptivePortal()) {
     return;
   }
   String s = "<!DOCTYPE html><html lang=\"en\"><head><meta name=\"viewport\" content=\"width=device-width, initial-scale=1, user-scalable=no\"/>";
   s += "<title>AQI LCD</title></head><body><p>Hello to AQI LCD!</p>";
+
+  if (WiFi.status() == WL_CONNECTED) {
+    s += "<p>IP address: {ip}<br>";
+    s += "Subnet mask: {mask}<br>";
+    s += "Gateway: {gateway}<br>";
+    s += "MAC address: {mac}</p>";
+    s += "<p>SSID: {ssid}<br>";
+    s += "RSSI: {rssi} dBm<br>";
+    s += "Signal: {signal}%</p>";
+
+    s.replace("{ip}", WiFi.localIP().toString());
+    s.replace("{gateway}", WiFi.gatewayIP().toString());
+    s.replace("{mask}", WiFi.subnetMask().toString());
+    s.replace("{mac}", WiFi.macAddress());
+    s.replace("{ssid}", WiFi.SSID());
+    s.replace("{rssi}", String(WiFi.RSSI()));
+    s.replace("{signal}", String(WebConfig::calcWiFiSignalQuality(WiFi.RSSI())));
+  }
+
   s += "<p>Go to <a href='config'>configure page</a> to change settings.</p>";
   s += "</body></html>\n";
   this->server->send(200, "text/html", s);
