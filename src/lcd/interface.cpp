@@ -9,12 +9,16 @@
 #include "lcd/bitmaps/icon-pressure.h"
 #include "lcd/bitmaps/icon-temp.h"
 
+#include "lcd/bitmaps/icon-indoor.h"
+#include "lcd/bitmaps/icon-outdoor.h"
+
 #define INDICATOR_RADIUS 4
 #define INDICATOR_LENGTH 40
 #define INDICATOR_COLOR 0x0339
 
-Interface::Interface(TFT_eSPI *tft) {
+Interface::Interface(TFT_eSPI *tft, LocalMeasure *measure) {
   this->tft = tft;
+  this->measure = measure;
 }
 
 void Interface::update(DisplayModel *model) {
@@ -30,7 +34,12 @@ void Interface::update(DisplayModel *model) {
 
   int32_t y = 135;
   int32_t offset = 40;
-  
+
+  if (! measure->bme280_init_failed) {
+		// getting temperature, humidity and pressure (optional)
+		measure->fetchSensorBME280();
+	}
+
   // pm 2.5
   if (levelsRedrawn || this->initialDraw || isDifferent(this->previousModel.pm25, model->pm25)) {
     this->tft->fillRect(55, y - 18, 185, offset - 15, TFT_BLACK);
@@ -45,7 +54,7 @@ void Interface::update(DisplayModel *model) {
     this->tft->drawRect(this->tft->getCursorX() - 49, this->tft->getCursorY(), 2, 4, TFT_WHITE);
 
     this->tft->setFreeFont(&FreeSans12pt7b);
-    this->tft->setCursor(145, y);
+    this->tft->setCursor(165, y);
     this->tft->print(model->pm25rel);
     this->tft->print("%");
   }
@@ -65,72 +74,100 @@ void Interface::update(DisplayModel *model) {
     this->tft->drawRect(this->tft->getCursorX() - 49, this->tft->getCursorY(), 2, 4, TFT_WHITE);
 
     this->tft->setFreeFont(&FreeSans12pt7b);
-    this->tft->setCursor(145, y);
+    this->tft->setCursor(165, y);
     this->tft->print(model->pm10rel);
     this->tft->print("%");
   }
-  y += offset;
+  y += offset + 12;
 
   // temp
   if (this->initialDraw || isDifferent(this->previousModel.temp, model->temp)) {
-    this->tft->setFreeFont(&FreeSans12pt7b);
-    this->tft->fillRect(55, y - 18, 185, offset - 15, TFT_BLACK);
-    this->tft->setCursor(90, y);
+    this->tft->setFreeFont(&FreeSans9pt7b);
+    this->tft->fillRect(55, y - 18, 75, offset - 15, TFT_BLACK);
+    this->tft->setCursor(55, y);
     this->tft->print(model->temp);
     this->tft->print(" C");
-    this->tft->drawCircle(this->tft->getCursorX() - 20, y - 15, 2, TFT_WHITE);
+    this->tft->drawCircle(this->tft->getCursorX() - 15, y - 10, 2, TFT_WHITE);
+  }
+
+  if (! measure->bme280_init_failed) {
+    this->tft->setFreeFont(&FreeSans9pt7b);
+    this->tft->fillRect(150, y - 18, 90, offset - 15, TFT_BLACK);
+    this->tft->setCursor(150, y);
+    this->tft->printf("%.1f", measure->getTemperature());
+    this->tft->print(" C");
+    this->tft->drawCircle(this->tft->getCursorX() - 15, y - 10, 2, TFT_WHITE);
   }
   y += offset;
 
   // humidity
   if (this->initialDraw || isDifferent(this->previousModel.humidity, model->humidity)) {
-    this->tft->setFreeFont(&FreeSans12pt7b);
-    this->tft->fillRect(55, y - 18, 185, offset - 15, TFT_BLACK);
-    this->tft->setCursor(90, y);
+    this->tft->setFreeFont(&FreeSans9pt7b);
+    this->tft->fillRect(55, y - 18, 75, offset - 15, TFT_BLACK);
+    this->tft->setCursor(55, y);
     this->tft->print(model->humidity);
+    this->tft->print("%");
+  }
+
+  if (! measure->bme280_init_failed) {
+    this->tft->setFreeFont(&FreeSans9pt7b);
+    this->tft->fillRect(150, y - 18, 90, offset - 15, TFT_BLACK);
+    this->tft->setCursor(150, y);
+    this->tft->printf("%.1f", measure->getHumidity());
     this->tft->print("%");
   }
   y += offset;
 
   // pressure
   if (this->initialDraw || isDifferent(this->previousModel.pressure, model->pressure)) {
-    this->tft->setFreeFont(&FreeSans12pt7b);
-    this->tft->fillRect(55, y - 18, 185, offset - 15, TFT_BLACK);
-    this->tft->setCursor(90, y);
+    this->tft->setFreeFont(&FreeSans9pt7b);
+    this->tft->fillRect(55, y - 18, 75, offset - 15, TFT_BLACK);
+    this->tft->setCursor(55, y);
     this->tft->print(model->pressure);
-    this->tft->print(" hPa");
+    this->tft->print("hPa");
   }
 
+  if (! measure->bme280_init_failed) {
+    this->tft->setFreeFont(&FreeSans9pt7b);
+    this->tft->fillRect(150, y - 18, 90, offset - 15, TFT_BLACK);
+    this->tft->setCursor(150, y);
+    this->tft->printf("%.0f", measure->getPressure());
+    this->tft->print("hPa");
+  }
   y = 110;
   offset = 40;
   if (this->initialDraw) {
     drawBitmap(6, y, &iconpm25);
     drawBitmap(5, y += offset, &iconpm10);
-    drawBitmap(7, y += offset, &icontemp);
+    drawBitmap(7, y += offset + 15, &icontemp);
     drawBitmap(3, y += offset, &iconhumidity);
     drawBitmap(3, y += offset, &iconpressure);
+
+    tft->fillRect(30, 195, 180, 2, INDICATOR_COLOR);
+    drawBitmap(35, 230, &iconoutdoor);
+    drawBitmap(130, 230, &iconindoor);
   }
   this->initialDraw = false;
   this->previousModel = *model;
 }
 
 void Interface::drawTouchPosition(uint16_t x, uint16_t y, uint16_t z) {
-    tft->fillRect(0, 0, 58, 50, TFT_RED);
+    tft->fillRect(240 - 58, 320 - 50, 58, 50, TFT_RED);
     tft->setTextColor(TFT_YELLOW);
     tft->setTextSize(1);
-    tft->setCursor(0, 12);
+    tft->setCursor(240 - 58, 320 - 38);
     tft->print("X:");
     tft->print(x);
-    tft->setCursor(0, 30);
+    tft->setCursor(240 - 58, 320 - 20);
     tft->print("Y:");
     tft->print(y);
-    tft->setCursor(0, 48);
+    tft->setCursor(240 - 58, 320 - 2);
     tft->print("Z:");
     tft->print(z);
 }
 
 void Interface::clearTouchPosition() {
-    tft->fillRect(0, 0, 58, 50, TFT_BLACK);
+    tft->fillRect(240 - 58, 320 - 50, 58, 50, TFT_BLACK);
 }
 
 void Interface::drawLevels(uint16_t x, uint16_t y) {

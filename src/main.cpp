@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include <Wire.h>
 
 #include "data-source.h"
 #include "fetcher.h"
@@ -33,6 +34,10 @@ void wifiConnected(Config config) {
 void setup() {
   Serial.begin(115200);
   Serial.println("AQI LCD is starting!");
+  pinMode(D3, OUTPUT);
+  pinMode(TX, FUNCTION_3);
+  pinMode(RX, FUNCTION_3);
+  Wire.begin(TX, RX);
   frontend->init();
   webConfig = new WebConfig(frontend, &wifiConnected);
 }
