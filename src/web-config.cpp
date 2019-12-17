@@ -3,9 +3,10 @@
 const String WebConfig::SENSOR_TYPE_NAMES[] = {"aqi.eco", "local device", ""};
 const String WebConfig::SENSOR_TYPE_VALUES[] = {"AQI_ECO", "LOCAL_DEVICE", ""};
 
-WebConfig::WebConfig(Frontend *frontend, std::function<void(Config)> wifiConnected) {
-  this->frontend = frontend;
-  this->frontend->println("Initializing device...");
+WebConfig::WebConfig(Logger *logger, CustomWebConfig *customWebConfig, std::function<void(Config)> wifiConnected) {
+  this->logger = logger;
+  this->logger->println("Initializing device...");
+  this->customWebConfig = customWebConfig;
 
   this->dnsServer = new DNSServer();
   this->server = new WebServer(80);
@@ -13,12 +14,9 @@ WebConfig::WebConfig(Frontend *frontend, std::function<void(Config)> wifiConnect
 
   this->sensorUrlParam = new IotWebConfParameter("Sensor URL", "sensorUrl", this->sensorUrl, 512);
   this->sensorTypeParam = new IotWebConfParameter("Sensor type", "sensorType", this->sensorType, 16, "select", SENSOR_TYPE_NAMES, SENSOR_TYPE_VALUES, "AQI_ECO");
-  this->timezoneOffsetParam = new IotWebConfParameter("Timezone offset (hours)", "timezoneOffset", this->timezoneOffset, 5, "number", NULL, "1", "min=\"-12\" max=\"12\"");
-  this->backlightTimeParam = new IotWebConfParameter("Backlight time (seconds)", "backlightTime", this->backlightTime, 5, "number", NULL, "10", "min=\"0\" max=\"60\"");
   this->iotWebConf->addParameter(this->sensorUrlParam);
   this->iotWebConf->addParameter(this->sensorTypeParam);
-  this->iotWebConf->addParameter(this->timezoneOffsetParam);
-  this->iotWebConf->addParameter(this->backlightTimeParam);
+  customWebConfig->addParameters(this->iotWebConf);
   this->iotWebConf->setFormValidator([this]{ return this->formValidator(); });
   this->iotWebConf->setWifiConnectionCallback([wifiConnected, this]{
     Config config;
@@ -63,13 +61,7 @@ boolean WebConfig::formValidator() {
     valid = false;
   }
 
-  if (this->server->arg(this->timezoneOffsetParam->getId()).length() == 0) {
-    this->timezoneOffsetParam->errorMessage = "Please provide the timezone offset.";
-    valid = false;
-  }
-
-  if (this->server->arg(this->backlightTimeParam->getId()).length() == 0) {
-    this->backlightTimeParam->errorMessage = "Please provide backlight time or 0 for disable.";
+  if (!this->customWebConfig->validate(this->server)) {
     valid = false;
   }
 
@@ -78,17 +70,17 @@ boolean WebConfig::formValidator() {
 
 boolean WebConfig::connectAp(const char* apName, const char* password) {
   if (this->displayLogs) {
-    this->frontend->println("Creating access point");
-    this->frontend->println("SSID:     " + String(apName));
-    this->frontend->println("Password: " + String(password));
+    this->logger->println("Creating access point");
+    this->logger->println("SSID:     " + String(apName));
+    this->logger->println("Password: " + String(password));
   }
   return WiFi.softAP(apName, password);
 }
 
 void WebConfig::connectWifi(const char* ssid, const char* password) {
   if (this->displayLogs) {
-    this->frontend->print("Connecting to WiFi ");
-    this->frontend->println(ssid);
+    this->logger->print("Connecting to WiFi ");
+    this->logger->println(ssid);
   }
   WiFi.begin(ssid, password);
 }
@@ -141,22 +133,18 @@ void WebConfig::setConfig(Config *config) {
   } else if (sensorTypeStr = "LOCAL_DEVICE") {
     config->sensorType = LOCAL_DEVICE;
   }
-  config->timeZoneOffset = String(this->timezoneOffset).toInt();
-  config->backlightTime = String(this->backlightTime).toInt();
 }
 
 void WebConfig::displayConfig() {
-  this->frontend->print("Local IP:         ");
-  this->frontend->println(WiFi.localIP().toString());
+  this->logger->print("Local IP:         ");
+  this->logger->println(WiFi.localIP().toString());
 
-  this->frontend->print("Sensor type:      ");
-  this->frontend->println(this->sensorType);
-  this->frontend->println("Sensor URL:");
-  this->frontend->println(this->sensorUrl);
-  this->frontend->print("Timezeone offset: ");
-  this->frontend->println(this->timezoneOffset);
-  this->frontend->print("Backlight time: ");
-  this->frontend->println(this->backlightTime);
+  this->logger->print("Sensor type:      ");
+  this->logger->println(this->sensorType);
+  this->logger->println("Sensor URL:");
+  this->logger->println(this->sensorUrl);
+
+  this->customWebConfig->displayConfig(logger);
 
   delay(1000 * 2);
 }

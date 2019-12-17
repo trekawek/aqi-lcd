@@ -1,8 +1,20 @@
 #if FRONTEND_LED
 #include "led/led-frontend.h"
+#include "serial-logger.h"
+#include "led/led-web-config.h"
 
 LedFrontend::LedFrontend() {
   this->strip = new Adafruit_NeoPixel(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);
+  this->ledWebConfig = new LedWebConfig();
+  this->logger = new SerialLogger();
+}
+
+CustomWebConfig* LedFrontend::getCustomWebConfig() {
+  return ledWebConfig;
+}
+
+Logger* LedFrontend::getLogger() {
+  return logger;
 }
 
 void LedFrontend::init() {
@@ -59,14 +71,6 @@ void LedFrontend::updateDataSourceStatus(DataSourceStatus status) {
  }
  strip->setPixelColor(0, color);
  strip->show();
-}
-
-void LedFrontend::print(String message) {
-  Serial.print(message);
-}
-
-void LedFrontend::println(String message) {
-  Serial.println(message);
 }
 
 void LedFrontend::unpack(uint32_t color, uint8_t *colors) {
