@@ -11,7 +11,7 @@ void TouchInterface::update() {
   uint16_t x, y, z;
 
   if (millis() - backlight->lastUpdate > (backlight->backlightTime * 1000)) {
-    backlight->setBacklight(touchDisplayed);
+    backlight->setBacklight(false);
   }
 
   if (tft->getTouch(&x, &y, 150)) {
@@ -20,7 +20,7 @@ void TouchInterface::update() {
       interface->drawTouchPosition(x, y, z);
     }
     touchDisplayed = true;
-    backlight->setBacklight(touchDisplayed);
+    backlight->setBacklight(true);
   } else if (touchDisplayed) {
     if (this->displayTouch) {
       interface->clearTouchPosition();
