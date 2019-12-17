@@ -10,9 +10,7 @@ TouchInterface::TouchInterface(TFT_eSPI *tft, Interface *interface, Backlight *b
 void TouchInterface::update() {
   uint16_t x, y, z;
 
-  if (millis() - backlight->lastUpdate > (backlight->backlightTime * 1000)) {
-    backlight->setBacklight(false);
-  }
+  backlight->update();
 
   if (tft->getTouch(&x, &y, 150)) {
     if (this->displayTouch) {

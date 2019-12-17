@@ -7,7 +7,10 @@
 class Backlight {
   public:
   Backlight(unsigned long backlightTime);
+  void update();
   void setBacklight(boolean backlight);
+
+  private:
   unsigned long lastUpdate = -60 * 1000;
   unsigned long backlightTime = 10 * 1000;
 };
