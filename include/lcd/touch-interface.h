@@ -5,16 +5,19 @@
 #include <TFT_eSPI.h>
 
 #include "lcd/interface.h"
+#include "lcd/backlight.h"
 
 class TouchInterface {
   public:
-  TouchInterface(TFT_eSPI *tft, Interface *interface);
+  TouchInterface(TFT_eSPI *tft, Interface *interface, Backlight *backlight);
   void update();
   
   private:
   TFT_eSPI *tft;
   Interface *interface;
+  Backlight *backlight;
   boolean touchDisplayed = false;
+  boolean displayTouch = false;
 };
 
 #endif

@@ -12,6 +12,7 @@
 #include "lcd/display-clock.h"
 #include "lcd/interface.h"
 #include "lcd/touch-interface.h"
+#include "lcd/backlight.h"
 #include "lcd/wifi-status.h"
 
 class LcdFrontend : public Frontend {
@@ -31,6 +32,7 @@ class LcdFrontend : public Frontend {
     DisplayClock *displayClock;
     Interface *interface;
     TouchInterface *touchInterface;
+    Backlight *backlight;
     WifiStatus *wifiStatus;
 };
 

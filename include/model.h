@@ -30,6 +30,7 @@ typedef struct {
   String sensorUrl;
   SensorType sensorType;
   int timeZoneOffset;
+  int backlightTime;
 } Config;
 
 #endif
