@@ -29,6 +29,9 @@ WebConfig::WebConfig(Logger *logger, CustomWebConfig *customWebConfig, std::func
   });
   this->iotWebConf->setApConnectionHandler([this](const char* apName, const char* password){ return this->connectAp(apName, password); });
   this->iotWebConf->setWifiConnectionHandler([this](const char* ssid, const char* password){ return this->connectWifi(ssid, password); });
+  this->iotWebConf->setConfigSavedCallback([]{
+    ESP.restart();
+  });
 
   this->drd = new DoubleResetDetector(DRD_TIMEOUT, DRD_ADDRESS);
   if (!this->drd->detectDoubleReset()) {
