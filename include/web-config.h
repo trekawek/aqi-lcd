@@ -10,7 +10,7 @@
 #include "frontend.h"
 #include "model.h"
 
-#define CONFIG_VERSION "aqiled2"
+#define CONFIG_VERSION "aq01"
 #define DRD_TIMEOUT 10
 #define DRD_ADDRESS 0
 

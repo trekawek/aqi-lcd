@@ -10,6 +10,16 @@ class LedWebConfig : public CustomWebConfig {
     void addParameters(IotWebConf *webConf);
     boolean validate(WebServer *server);
     void displayConfig(Logger *logger);
+
+    int getBrightness();
+    int getLedCount();
+
+    private:
+    char brightness[5];
+    char ledCount[6];
+
+    IotWebConfParameter *brightnessParam;
+    IotWebConfParameter *ledCountParam;
 };
 
 #endif
