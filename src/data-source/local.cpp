@@ -1,7 +1,3 @@
-#include <Arduino.h>
-#include <ESP8266HTTPClient.h>
-#include <WiFiClientSecureBearSSL.h>
-
 #include "data-source/local.h"
 
 const String LocalDataSource::P10_VALUES[] = { "SDS_P1", "PMS_P1", "HPM_P1", "" };
@@ -10,50 +6,104 @@ const String LocalDataSource::TEMP_VALUES[] = { "BME280_temperature", "BMP_tempe
 const String LocalDataSource::HUMIDITY_VALUES[] = { "BME280_humidity", "" };
 const String LocalDataSource::PRESSURE_VALUES[] = { "BME280_pressure", "BMP_pressure", "" };
 
-LocalDataSource::LocalDataSource(String url) {
+LocalDataSource::LocalDataSource(String url, MDNSResolver *mdnsResolver) {
   this->url = url;
+  this->mdnsResolver = mdnsResolver;
+  this->client = new WiFiClient();
+
+  parseUrl(url);
+  if (local) {
+    mdnsResolver->setAddressToResolve(hostArr);
+  }
+
   const size_t capacity = JSON_ARRAY_SIZE(15) + 15*JSON_OBJECT_SIZE(2) + JSON_OBJECT_SIZE(3) + 490;
   doc = new DynamicJsonDocument(capacity);
 }
 
+boolean LocalDataSource::parseUrl(String url) {
+    int index = url.indexOf(':');
+    if (index < 0) {
+        return false;
+    }
+
+    protocol = url.substring(0, index);
+    url.remove(0, (index + 3));
+
+    if (protocol == "http") {
+        port = 80;
+        https = false;
+    } else if (protocol == "https") {
+        port = 443;
+        https = true;
+    } else {
+        return false;
+    }
+
+    index = url.indexOf('/');
+    host = url.substring(0, index);
+    url.remove(0, index);
+
+    index = host.indexOf(':');
+    if (index >= 0) {
+        port = host.substring(index + 1).toInt();
+        host.remove(0, (index + 1));
+    }
+    local = host.endsWith(".local");
+    if (local) {
+      hostArr = (char*) calloc(host.length() + 1, sizeof(char));
+      host.toCharArray(hostArr, host.length() + 1, 0);
+    }
+    path = url;
+    return true;
+}
+
 boolean LocalDataSource::readModel(JsonModel *model) {
   boolean result = false;
-  WiFiClient client;
   HTTPClient http;
   Serial.println("[HTTP] Begin...");
-  http.begin(client, url);
-  int httpCode = 0;
-  while (true) {
-    httpCode = http.GET();
-    if (httpCode == HTTP_CODE_OK) {
-      break;
+  if (this->path.length() == 0) {
+    http.begin(*client, this->url);
+  } else {
+    if (local) {
+      if (mdnsResolver->isResolved()) {
+        Serial.print("[HTTP] Resolved ");
+        Serial.print(host);
+        Serial.print(" to ");
+        Serial.println(mdnsResolver->getResolvedIp());
+        http.begin(*client, mdnsResolver->getResolvedIp(), port, path, https);
+      } else {
+        Serial.print("[HTTP] Can't resolve ");
+        Serial.println(hostArr);
+        return false;
+      }
+    } else {
+      http.begin(*client, host, port, path, https);
     }
-    delay(1000);
   }
+  int httpCode = http.GET();
   Serial.printf("[HTTP] Response code: %d\r\n", httpCode);
-  
-  String body = http.getString();
-
-  deserializeJson(*doc, body);
-
-  JsonArray sensordatavalues = (*doc)["sensordatavalues"];
-  for (auto value : sensordatavalues) {
-    JsonObject o = value.as<JsonObject>();
-    String n = o["value_type"];
-    String v = o["value"];
-    
-    if (inArray(P10_VALUES, n)) {
-      model->pm10 = v.toInt();
-    } else if (inArray(P25_VALUES, n)) {
-      model->pm25 = v.toInt();
-    } else if (inArray(TEMP_VALUES, n)) {
-      model->temp = v.toInt();
-    } else if (inArray(HUMIDITY_VALUES, n)) {
-      model->humidity = v.toInt();
-    } else if (inArray(PRESSURE_VALUES, n)) {
-      model->pressure = v.toInt() / 100;
+  if (httpCode == HTTP_CODE_OK) {
+    String body = http.getString();
+    deserializeJson(*doc, body);
+    JsonArray sensordatavalues = (*doc)["sensordatavalues"];
+    for (auto value : sensordatavalues) {
+      JsonObject o = value.as<JsonObject>();
+      String n = o["value_type"];
+      String v = o["value"];
+      
+      if (inArray(P10_VALUES, n)) {
+        model->pm10 = v.toInt();
+      } else if (inArray(P25_VALUES, n)) {
+        model->pm25 = v.toInt();
+      } else if (inArray(TEMP_VALUES, n)) {
+        model->temp = v.toInt();
+      } else if (inArray(HUMIDITY_VALUES, n)) {
+        model->humidity = v.toInt();
+      } else if (inArray(PRESSURE_VALUES, n)) {
+        model->pressure = v.toInt() / 100;
+      }
+      result = true;
     }
-    result = true;
   }
   http.end();
   return result;

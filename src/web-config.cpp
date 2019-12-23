@@ -3,7 +3,7 @@
 const String WebConfig::SENSOR_TYPE_NAMES[] = {"aqi.eco", "local device", ""};
 const String WebConfig::SENSOR_TYPE_VALUES[] = {"AQI_ECO", "LOCAL_DEVICE", ""};
 
-WebConfig::WebConfig(Logger *logger, CustomWebConfig *customWebConfig, std::function<void(Config)> wifiConnected) {
+WebConfig::WebConfig(Logger *logger, CustomWebConfig *customWebConfig, std::function<void(Config, IPAddress)> wifiConnected) {
   this->logger = logger;
   this->logger->println("Initializing device...");
   this->customWebConfig = customWebConfig;
@@ -25,7 +25,7 @@ WebConfig::WebConfig(Logger *logger, CustomWebConfig *customWebConfig, std::func
       this->displayConfig();
       this->displayLogs = false;
     }
-    wifiConnected(config);
+    wifiConnected(config, WiFi.localIP());
   });
   this->iotWebConf->setApConnectionHandler([this](const char* apName, const char* password){ return this->connectAp(apName, password); });
   this->iotWebConf->setWifiConnectionHandler([this](const char* ssid, const char* password){ return this->connectWifi(ssid, password); });
@@ -85,6 +85,7 @@ void WebConfig::connectWifi(const char* ssid, const char* password) {
     this->logger->print("Connecting to WiFi ");
     this->logger->println(ssid);
   }
+  wifi_set_sleep_type(NONE_SLEEP_T); //LIGHT_SLEEP_T and MODE_SLEEP_T
   WiFi.begin(ssid, password);
 }
 

@@ -9,6 +9,7 @@
 Fetcher::Fetcher(Frontend *frontend, DataSource *dataSource) {
   this->dataSource = dataSource;
   this->frontend = frontend;
+  this->lastDisplayUpdate = millis() - 59 * 1000;
 }
 
 boolean Fetcher::update() {
@@ -16,11 +17,11 @@ boolean Fetcher::update() {
     JsonModel json;
     Serial.println("Updating sensor values");
     frontend->updateDataSourceStatus(IN_PROGRESS);
+    this->lastDisplayUpdate = millis();
     if (this->dataSource->readModel(&json)) {
       DisplayModel displayModel;
       createDisplayModel(&json, &displayModel);
       frontend->updateDisplayModel(&displayModel);
-      this->lastDisplayUpdate = millis();
       frontend->updateDataSourceStatus(SUCCESS);
       return true;
     } else {

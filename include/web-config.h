@@ -16,7 +16,7 @@
 
 class WebConfig {
   public:
-  WebConfig(Logger *logger, CustomWebConfig *customWebConfig, std::function<void(Config)> wifiConnected);
+  WebConfig(Logger *logger, CustomWebConfig *customWebConfig, std::function<void(Config, IPAddress)> wifiConnected);
   void update();
 
   private:
