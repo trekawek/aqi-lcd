@@ -49,7 +49,7 @@ void LedFrontend::updateDisplayModel(DisplayModel *displayModel) {
 }
 
 uint32_t LedFrontend::getColor(uint16_t ledIndex) {
-  uint32_t colors[] = {0x57b108, 0xb0dd10, 0xffd911, 0xe58100, 0x990000};
+  uint32_t colors[] = {0x008000, 0x3fff15, 0xffff00, 0xff4500, 0x800000};
   uint16_t index = 5 * ledIndex / strip->numPixels();
   return colors[index];
 }
