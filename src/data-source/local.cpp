@@ -20,43 +20,6 @@ LocalDataSource::LocalDataSource(String url, MDNSResolver *mdnsResolver) {
   doc = new DynamicJsonDocument(capacity);
 }
 
-boolean LocalDataSource::parseUrl(String url) {
-    int index = url.indexOf(':');
-    if (index < 0) {
-        return false;
-    }
-
-    protocol = url.substring(0, index);
-    url.remove(0, (index + 3));
-
-    if (protocol == "http") {
-        port = 80;
-        https = false;
-    } else if (protocol == "https") {
-        port = 443;
-        https = true;
-    } else {
-        return false;
-    }
-
-    index = url.indexOf('/');
-    host = url.substring(0, index);
-    url.remove(0, index);
-
-    index = host.indexOf(':');
-    if (index >= 0) {
-        port = host.substring(index + 1).toInt();
-        host.remove(0, (index + 1));
-    }
-    local = host.endsWith(".local");
-    if (local) {
-      hostArr = (char*) calloc(host.length() + 1, sizeof(char));
-      host.toCharArray(hostArr, host.length() + 1, 0);
-    }
-    path = url;
-    return true;
-}
-
 boolean LocalDataSource::readModel(JsonModel *model) {
   boolean result = false;
   HTTPClient http;
@@ -116,4 +79,41 @@ boolean LocalDataSource::inArray(const String array[], String str) {
     }
   }
   return false;
+}
+
+boolean LocalDataSource::parseUrl(String url) {
+    int index = url.indexOf(':');
+    if (index < 0) {
+        return false;
+    }
+
+    protocol = url.substring(0, index);
+    url.remove(0, (index + 3));
+
+    if (protocol == "http") {
+        port = 80;
+        https = false;
+    } else if (protocol == "https") {
+        port = 443;
+        https = true;
+    } else {
+        return false;
+    }
+
+    index = url.indexOf('/');
+    host = url.substring(0, index);
+    url.remove(0, index);
+
+    index = host.indexOf(':');
+    if (index >= 0) {
+        port = host.substring(index + 1).toInt();
+        host.remove(0, (index + 1));
+    }
+    local = host.endsWith(".local");
+    if (local) {
+      hostArr = (char*) calloc(host.length() + 1, sizeof(char));
+      host.toCharArray(hostArr, host.length() + 1, 0);
+    }
+    path = url;
+    return true;
 }
