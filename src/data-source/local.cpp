@@ -47,25 +47,27 @@ boolean LocalDataSource::readModel(JsonModel *model) {
   Serial.printf("[HTTP] Response code: %d\r\n", httpCode);
   if (httpCode == HTTP_CODE_OK) {
     String body = http.getString();
-    deserializeJson(*doc, body);
-    JsonArray sensordatavalues = (*doc)["sensordatavalues"];
-    for (auto value : sensordatavalues) {
-      JsonObject o = value.as<JsonObject>();
-      String n = o["value_type"];
-      String v = o["value"];
-      
-      if (inArray(P10_VALUES, n)) {
-        model->pm10 = v.toInt();
-      } else if (inArray(P25_VALUES, n)) {
-        model->pm25 = v.toInt();
-      } else if (inArray(TEMP_VALUES, n)) {
-        model->temp = v.toInt();
-      } else if (inArray(HUMIDITY_VALUES, n)) {
-        model->humidity = v.toInt();
-      } else if (inArray(PRESSURE_VALUES, n)) {
-        model->pressure = v.toInt() / 100;
+    if (body.startsWith("{")) {
+      deserializeJson(*doc, body);
+      JsonArray sensordatavalues = (*doc)["sensordatavalues"];
+      for (auto value : sensordatavalues) {
+        JsonObject o = value.as<JsonObject>();
+        String n = o["value_type"];
+        String v = o["value"];
+        
+        if (inArray(P10_VALUES, n)) {
+          model->pm10 = v.toInt();
+        } else if (inArray(P25_VALUES, n)) {
+          model->pm25 = v.toInt();
+        } else if (inArray(TEMP_VALUES, n)) {
+          model->temp = v.toInt();
+        } else if (inArray(HUMIDITY_VALUES, n)) {
+          model->humidity = v.toInt();
+        } else if (inArray(PRESSURE_VALUES, n)) {
+          model->pressure = v.toInt() / 100;
+        }
+        result = true;
       }
-      result = true;
     }
   }
   http.end();
