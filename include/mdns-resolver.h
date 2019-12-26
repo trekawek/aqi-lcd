@@ -1,7 +1,7 @@
 #ifndef _MDNS_RESOLVER_H
 #define _MDNS_RESOLVER_H
 
-#define MAX_MDNS_PACKET_SIZE 1024
+#define MAX_MDNS_PACKET_SIZE 2048
 
 #include <mdns.h>
 
@@ -10,8 +10,7 @@ using namespace mdns;
 class MDNSResolver {
     public:
     MDNSResolver();
-    void setup();
-    void setAddressToResolve(const char* addressToResolve);
+    void setup(const char* addressToResolve);
     void loop();
 
     boolean isResolved();

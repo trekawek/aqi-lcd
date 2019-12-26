@@ -4,7 +4,7 @@ MDNSResolver::MDNSResolver() {
     buffer = new byte[MAX_MDNS_PACKET_SIZE];
 }
 
-void MDNSResolver::setup() {
+void MDNSResolver::setup(const char* addressToResolve) {
     mdns = new mdns::MDns(NULL, NULL, ([this](const mdns::Answer* answer){
         if (isQueryInitialized && strncmp(query.qname_buffer, answer->name_buffer, MAX_MDNS_NAME_LEN) == 0) {
             strncpy(response, answer->rdata_buffer, MAX_MDNS_NAME_LEN);
@@ -15,9 +15,7 @@ void MDNSResolver::setup() {
             resolved = true;
         }
     }), buffer, MAX_MDNS_PACKET_SIZE);
-}
 
-void MDNSResolver::setAddressToResolve(const char* addressToResolve) {
     strncpy(query.qname_buffer, addressToResolve, MAX_MDNS_NAME_LEN);
     query.qtype = MDNS_TYPE_A;
     query.qclass = 1;

@@ -27,7 +27,6 @@ void wifiConnected(Config config, IPAddress localIp) {
     return;
   }
 
-  mdnsResolver->setup();
   dataSource = DataSource::createDataSource(config.sensorType, config.sensorUrl, mdnsResolver);
   fetcher = new Fetcher(frontend, dataSource);
   frontend->connected(config, dataSource);

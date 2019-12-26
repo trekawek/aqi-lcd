@@ -13,7 +13,7 @@ LocalDataSource::LocalDataSource(String url, MDNSResolver *mdnsResolver) {
 
   parseUrl(url);
   if (local) {
-    mdnsResolver->setAddressToResolve(hostArr);
+    mdnsResolver->setup(hostArr);
   }
 
   const size_t capacity = JSON_ARRAY_SIZE(15) + 15*JSON_OBJECT_SIZE(2) + JSON_OBJECT_SIZE(3) + 490;
