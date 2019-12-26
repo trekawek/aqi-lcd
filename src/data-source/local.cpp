@@ -48,6 +48,7 @@ boolean LocalDataSource::readModel(JsonModel *model) {
   if (httpCode == HTTP_CODE_OK) {
     String body = http.getString();
     if (body.startsWith("{")) {
+      Serial.println("[HTTP] Decoding result");
       deserializeJson(*doc, body);
       JsonArray sensordatavalues = (*doc)["sensordatavalues"];
       for (auto value : sensordatavalues) {
@@ -67,10 +68,12 @@ boolean LocalDataSource::readModel(JsonModel *model) {
           model->pressure = v.toInt() / 100;
         }
         result = true;
+      Serial.println("[HTTP] Result decoded");
       }
     }
   }
   http.end();
+  Serial.println("[HTTP] Request finished");
   return result;
 }
 

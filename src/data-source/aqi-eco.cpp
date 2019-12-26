@@ -20,6 +20,7 @@ boolean AqiEcoDataSource::readModel(JsonModel *model) {
   if (httpCode == HTTP_CODE_OK) {
     String body = http.getString();
     if (body.startsWith("{")) {
+      Serial.println("[HTTP] Decoding result");
       deserializeJson(*doc, body);
       JsonObject average_1h = (*doc)["average_1h"];
       model->pm25 = average_1h["pm25"];
@@ -28,8 +29,10 @@ boolean AqiEcoDataSource::readModel(JsonModel *model) {
       model->humidity = average_1h["humidity"];
       model->pressure = average_1h["pressure"];
       result = true;
+      Serial.println("[HTTP] Result decoded");
     }
   }
   http.end();
+  Serial.println("[HTTP] Request finished");
   return result;
 }

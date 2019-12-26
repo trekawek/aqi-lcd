@@ -15,7 +15,6 @@ Fetcher::Fetcher(Frontend *frontend, DataSource *dataSource) {
 boolean Fetcher::update() {
   if (millis() - this->lastDisplayUpdate > 60 * 1000) {
     JsonModel json;
-    Serial.println("Updating sensor values");
     frontend->updateDataSourceStatus(IN_PROGRESS);
     this->lastDisplayUpdate = millis();
     if (this->dataSource->readModel(&json)) {
