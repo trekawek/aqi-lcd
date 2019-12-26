@@ -23,6 +23,7 @@ void MDNSResolver::setup(const char* addressToResolve) {
     doResolve();
     lastUpdate = millis();
     isQueryInitialized = true;
+    mdns->loop(); // a single loop to read the reponse
 }
 
 void MDNSResolver::loop() {
