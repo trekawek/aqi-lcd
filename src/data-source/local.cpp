@@ -67,9 +67,9 @@ boolean LocalDataSource::readModel(JsonModel *model) {
         } else if (inArray(PRESSURE_VALUES, n)) {
           model->pressure = v.toInt() / 100;
         }
-        result = true;
-      Serial.println("[HTTP] Result decoded");
       }
+      result = true;
+      Serial.println("[HTTP] Result decoded");
     }
   }
   http.end();
