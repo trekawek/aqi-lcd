@@ -11,6 +11,7 @@ class DataSource {
     public:
     static DataSource* createDataSource(SensorType sensorType, String sensorUrl, MDNSResolver *mdnsResolver);
     virtual boolean readModel(JsonModel *model);
+    virtual boolean isReady();
 
     protected:
     String url;

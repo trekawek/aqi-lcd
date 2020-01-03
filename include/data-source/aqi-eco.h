@@ -11,6 +11,7 @@ class AqiEcoDataSource : public DataSource {
     public:
     AqiEcoDataSource(String url);
     boolean readModel(JsonModel *model);
+    boolean isReady();
 
     private:
     BearSSL::WiFiClientSecure *client;

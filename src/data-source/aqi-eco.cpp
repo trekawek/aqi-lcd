@@ -11,6 +11,10 @@ AqiEcoDataSource::AqiEcoDataSource(String url) {
   doc = new DynamicJsonDocument(capacity);
 }
 
+boolean AqiEcoDataSource::isReady() {
+  return true;
+}
+
 boolean AqiEcoDataSource::readModel(JsonModel *model) {
   boolean result = false;
   HTTPClient http;

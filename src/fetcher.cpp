@@ -13,6 +13,9 @@ Fetcher::Fetcher(Frontend *frontend, DataSource *dataSource) {
 }
 
 boolean Fetcher::update() {
+  if (!this->dataSource->isReady()) {
+    return false;
+  }
   if (millis() - this->lastDisplayUpdate > 60 * 1000) {
     JsonModel json;
     frontend->updateDataSourceStatus(IN_PROGRESS);

@@ -16,6 +16,7 @@ class LocalDataSource : public DataSource {
     public:
     LocalDataSource(String url, MDNSResolver *mdnsResolver);
     boolean readModel(JsonModel *model);
+    boolean isReady();
 
     private:
     boolean parseUrl(String url);

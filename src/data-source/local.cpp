@@ -20,6 +20,14 @@ LocalDataSource::LocalDataSource(String url, MDNSResolver *mdnsResolver) {
   doc = new DynamicJsonDocument(capacity);
 }
 
+boolean LocalDataSource::isReady() {
+  if (local) {
+    return mdnsResolver->isResolved();
+  } else {
+    return true;
+  }
+}
+
 boolean LocalDataSource::readModel(JsonModel *model) {
   boolean result = false;
   HTTPClient http;
@@ -29,10 +37,6 @@ boolean LocalDataSource::readModel(JsonModel *model) {
   } else {
     if (local) {
       if (mdnsResolver->isResolved()) {
-        Serial.print("[HTTP] Resolved ");
-        Serial.print(host);
-        Serial.print(" to ");
-        Serial.println(mdnsResolver->getResolvedIp());
         http.begin(*client, mdnsResolver->getResolvedIp(), port, path, https);
       } else {
         Serial.print("[HTTP] Can't resolve ");
