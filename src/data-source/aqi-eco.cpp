@@ -6,9 +6,6 @@ AqiEcoDataSource::AqiEcoDataSource(String url) {
   this->url = url;
   client = new BearSSL::WiFiClientSecure();
   client->setInsecure();
-
-  const size_t capacity = JSON_OBJECT_SIZE(3) + JSON_OBJECT_SIZE(8) + 2*JSON_OBJECT_SIZE(9);
-  doc = new DynamicJsonDocument(capacity);
 }
 
 boolean AqiEcoDataSource::isReady() {
@@ -17,6 +14,9 @@ boolean AqiEcoDataSource::isReady() {
 
 boolean AqiEcoDataSource::readModel(JsonModel *model) {
   boolean result = false;
+  Serial.print("[HTTP] Begin... (free heap: ");
+  Serial.print(ESP.getFreeHeap());
+  Serial.println(")");
   HTTPClient http;
   http.begin(*client, this->url);
   int httpCode = http.GET();
@@ -25,8 +25,8 @@ boolean AqiEcoDataSource::readModel(JsonModel *model) {
     String body = http.getString();
     if (body.startsWith("{")) {
       Serial.println("[HTTP] Decoding result");
-      deserializeJson(*doc, body);
-      JsonObject average_1h = (*doc)["average_1h"];
+      deserializeJson(doc, body);
+      JsonObject average_1h = doc["average_1h"];
       model->pm25 = average_1h["pm25"];
       model->pm10 = average_1h["pm10"];
       model->temp = average_1h["temperature"];

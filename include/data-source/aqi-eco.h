@@ -15,7 +15,7 @@ class AqiEcoDataSource : public DataSource {
 
     private:
     BearSSL::WiFiClientSecure *client;
-    DynamicJsonDocument *doc;
+    StaticJsonDocument<JSON_OBJECT_SIZE(3) + JSON_OBJECT_SIZE(8) + 2*JSON_OBJECT_SIZE(9)> doc;
 };
 
 #endif

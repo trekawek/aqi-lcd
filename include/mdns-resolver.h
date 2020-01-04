@@ -1,11 +1,11 @@
 #ifndef _MDNS_RESOLVER_H
 #define _MDNS_RESOLVER_H
 
-#define MAX_MDNS_PACKET_SIZE 2048
+#include <ESP8266WiFi.h>
+#include <mDNSResolver.h>
+#include <WiFiUdp.h>
 
-#include <mdns.h>
-
-using namespace mdns;
+using namespace mDNSResolver;
 
 class MDNSResolver {
     public:
@@ -13,20 +13,20 @@ class MDNSResolver {
     void setup(const char* addressToResolve);
     void loop();
 
-    boolean isResolved();
+    bool isResolved();
     char *getResolvedIp();
 
     private:
     void doResolve();
 
-    MDns *mdns;
-    byte *buffer;
+    WiFiUDP *udp;
+    Resolver *resolver;
+
+    char query[256];
+    char response[256];
     long lastUpdate;
-
-    struct Query query;
-    char response[MAX_MDNS_NAME_LEN];
-
-    boolean resolved = false;
+    bool initialized = false;
+    bool resolved = false;
 };
 
 #endif
