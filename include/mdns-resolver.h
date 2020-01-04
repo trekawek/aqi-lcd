@@ -26,7 +26,6 @@ class MDNSResolver {
     struct Query query;
     char response[MAX_MDNS_NAME_LEN];
 
-    boolean isQueryInitialized = false;
     boolean resolved = false;
 };
 

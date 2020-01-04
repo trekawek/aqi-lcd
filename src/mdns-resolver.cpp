@@ -6,7 +6,7 @@ MDNSResolver::MDNSResolver() {
 
 void MDNSResolver::setup(const char* addressToResolve) {
     mdns = new mdns::MDns(NULL, NULL, ([this](const mdns::Answer* answer){
-        if (isQueryInitialized && strncmp(query.qname_buffer, answer->name_buffer, MAX_MDNS_NAME_LEN) == 0) {
+        if (strncmp(query.qname_buffer, answer->name_buffer, MAX_MDNS_NAME_LEN) == 0) {
             strncpy(response, answer->rdata_buffer, MAX_MDNS_NAME_LEN);
             Serial.print("[mdns] ");
             Serial.print(query.qname_buffer);
@@ -20,20 +20,19 @@ void MDNSResolver::setup(const char* addressToResolve) {
     query.qtype = MDNS_TYPE_A;
     query.qclass = 1;
     query.unicast_response = 0;
-    doResolve();
-    lastUpdate = millis();
-    isQueryInitialized = true;
-    mdns->loop(); // a single loop to read the reponse
 }
 
 void MDNSResolver::loop() {
     if (mdns == NULL) {
         return;
     }
-    mdns->loop();
-    if (millis() - lastUpdate > 60 * 1000 && isQueryInitialized) {
+    if ((lastUpdate == 0 || millis() - lastUpdate > 30 * 60 * 1000)) {
         doResolve();
+        resolved = false;
         lastUpdate = millis();
+    }
+    if (!resolved) {
+        mdns->loop();
     }
 }
 
@@ -41,6 +40,7 @@ void MDNSResolver::doResolve() {
     mdns->Clear();
     mdns->AddQuery(query);
     mdns->Send();
+    Serial.println("[mdns] Query sent");
 }
 
 boolean MDNSResolver::isResolved() {
