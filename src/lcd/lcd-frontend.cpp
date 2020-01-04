@@ -27,13 +27,13 @@ void LcdFrontend::connected(Config config, DataSource *dataSource) {
   displayClock = new DisplayClock(tft, lcdWebConfig->getTimezoneOffset());
   interface = new Interface(tft);
   backlight = new Backlight(lcdWebConfig->getBacklightTime());
-  //touchInterface = new TouchInterface(tft, interface, backlight);
+  touchInterface = new TouchInterface(tft, interface, backlight);
   wifiStatus = new WifiStatus(tft);
 }
 
 void LcdFrontend::doLoop() {
   displayClock->update();
-  //touchInterface->update();
+  touchInterface->update();
   wifiStatus->update();
 }
 
