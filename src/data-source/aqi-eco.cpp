@@ -29,9 +29,11 @@ boolean AqiEcoDataSource::readModel(JsonModel *model) {
       JsonObject average_1h = doc["average_1h"];
       model->pm25 = average_1h["pm25"];
       model->pm10 = average_1h["pm10"];
-      model->temp = average_1h["temperature"];
-      model->humidity = average_1h["humidity"];
-      model->pressure = average_1h["pressure"];
+
+      JsonObject last_data = doc["last_data"];
+      model->temp = last_data["temperature"];
+      model->humidity = last_data["humidity"];
+      model->pressure = last_data["pressure"];
       result = true;
       Serial.println("[HTTP] Result decoded");
     }
