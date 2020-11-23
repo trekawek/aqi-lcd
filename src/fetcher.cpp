@@ -9,14 +9,14 @@
 Fetcher::Fetcher(Frontend *frontend, DataSource *dataSource) {
   this->dataSource = dataSource;
   this->frontend = frontend;
-  this->lastDisplayUpdate = millis() - 59 * 1000;
+  this->lastDisplayUpdate = -1;
 }
 
 boolean Fetcher::update() {
   if (!this->dataSource->isReady()) {
     return false;
   }
-  if (millis() - this->lastDisplayUpdate > 60 * 1000) {
+  if (this->lastDisplayUpdate == -1 || (millis() - this->lastDisplayUpdate) > INTERVAL_SEC * 1000) {
     JsonModel json;
     frontend->updateDataSourceStatus(IN_PROGRESS);
     this->lastDisplayUpdate = millis();

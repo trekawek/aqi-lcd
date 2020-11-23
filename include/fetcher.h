@@ -7,6 +7,8 @@
 #include "frontend.h"
 #include "model.h"
 
+#define INTERVAL_SEC 60
+
 class Fetcher {
     public:
     Fetcher(Frontend *frontend, DataSource *dataSource);
@@ -15,7 +17,7 @@ class Fetcher {
     private:
     DataSource *dataSource;
     Frontend *frontend;
-    long lastDisplayUpdate = -60 * 1000;
+    long lastDisplayUpdate;
 
     static void createDisplayModel(JsonModel *json, DisplayModel *displayModel);
 };
