@@ -3,16 +3,20 @@
 #define _LCD_BACKLIGHT_H
 
 #include <TFT_eSPI.h>
+#include <limits.h>
 
 class Backlight {
   public:
-  Backlight(unsigned long backlightTime);
+  Backlight();
+  void begin();
   void update();
+  void setTimeout(unsigned long backlightTime);
   void setBacklight(boolean backlight);
 
   private:
   unsigned long lastUpdate = -60 * 1000;
-  unsigned long backlightTime = 10 * 1000;
+  unsigned long backlightTime = 0;
+  bool enabled = false;
 };
 
 #endif

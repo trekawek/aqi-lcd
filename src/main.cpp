@@ -36,7 +36,6 @@ void wifiConnected(Config config, IPAddress localIp) {
 void setup() {
   Serial.begin(115200);
   Serial.println("AQI LCD is starting!");
-  pinMode(D3, OUTPUT);
   frontend->init();
   mdnsResolver = new MDNSResolver();
   webConfig = new WebConfig(frontend->getLogger(), frontend->getCustomWebConfig(), &wifiConnected);

@@ -3,6 +3,7 @@
 #include "lcd/lcd-web-config.h"
 
 LcdFrontend::LcdFrontend() {
+  backlight = new Backlight();
   tft = new TFT_eSPI();
   logger = new LcdLogger(tft);
   lcdWebConfig = new LcdWebConfig();
@@ -17,6 +18,7 @@ CustomWebConfig* LcdFrontend::getCustomWebConfig() {
  }
 
 void LcdFrontend::init() {
+  backlight->begin();
   tft->begin();
   tft->setRotation(0);
   tft->fillScreen(0);
@@ -26,9 +28,9 @@ void LcdFrontend::connected(Config config, DataSource *dataSource) {
   tft->fillScreen(0);
   displayClock = new DisplayClock(tft, lcdWebConfig->getTimezoneOffset());
   interface = new Interface(tft);
-  backlight = new Backlight(lcdWebConfig->getBacklightTime());
   touchInterface = new TouchInterface(tft, interface, backlight);
   wifiStatus = new WifiStatus(tft);
+  backlight->setTimeout(lcdWebConfig->getBacklightTime());
 }
 
 void LcdFrontend::doLoop() {
