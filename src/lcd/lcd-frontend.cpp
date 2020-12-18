@@ -7,6 +7,7 @@ LcdFrontend::LcdFrontend() {
   tft = new TFT_eSPI();
   logger = new LcdLogger(tft);
   lcdWebConfig = new LcdWebConfig();
+  button = new Button(backlight);
 }
 
 CustomWebConfig* LcdFrontend::getCustomWebConfig() {
@@ -37,6 +38,7 @@ void LcdFrontend::doLoop() {
   displayClock->update();
   touchInterface->update();
   wifiStatus->update();
+  button->update();
 }
 
 void LcdFrontend::updateDisplayModel(DisplayModel *displayModel) {

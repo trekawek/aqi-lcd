@@ -10,6 +10,7 @@
 #include "frontend.h"
 
 #include "lcd/backlight.h"
+#include "lcd/button.h"
 #include "lcd/display-clock.h"
 #include "lcd/interface.h"
 #include "lcd/lcd-logger.h"
@@ -40,6 +41,7 @@ class LcdFrontend : public Frontend {
     WifiStatus *wifiStatus;
     LcdWebConfig *lcdWebConfig;
     LcdLogger *logger;
+    Button *button;
 };
 
 #endif
