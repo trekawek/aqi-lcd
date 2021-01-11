@@ -77,7 +77,7 @@ void Interface::update(DisplayModel *model) {
     this->tft->fillRect(55, y - 18, 185, offset - 15, TFT_BLACK);
     this->tft->setCursor(90, y);
     char temp[10];
-    snprintf(temp, 10, "%.0f", model->temp);
+    snprintf(temp, 10, "%.0f", round(model->temp));
     this->tft->print(temp);
     this->tft->print(" C");
     this->tft->drawCircle(this->tft->getCursorX() - 20, y - 15, 2, TFT_WHITE);
