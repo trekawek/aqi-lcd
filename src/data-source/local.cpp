@@ -62,7 +62,7 @@ boolean LocalDataSource::readModel(JsonModel *model) {
         } else if (inArray(P25_VALUES, n)) {
           model->pm25 = v.toInt();
         } else if (inArray(TEMP_VALUES, n)) {
-          model->temp = v.toInt();
+          model->temp = v.toFloat();
         } else if (inArray(HUMIDITY_VALUES, n)) {
           model->humidity = v.toInt();
         } else if (inArray(PRESSURE_VALUES, n)) {
