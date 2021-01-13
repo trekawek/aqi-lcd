@@ -18,6 +18,9 @@ Frontend *frontend = new LcdFrontend();
 #elif FRONTEND_LED
 #include "led/led-frontend.h"
 Frontend *frontend = new LedFrontend();
+#elif FRONTEND_OLED
+#include "oled/oled-frontend.h"
+Frontend *frontend = new OledFrontend();
 #else
 #error "Either FRONTEND_LCD or FRONTEND_LED should be set"
 #endif
