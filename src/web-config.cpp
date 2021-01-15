@@ -86,6 +86,7 @@ void WebConfig::connectWifi(const char* ssid, const char* password) {
     this->logger->println(ssid);
   }
   wifi_set_sleep_type(NONE_SLEEP_T); //LIGHT_SLEEP_T and MODE_SLEEP_T
+  WiFi.softAPdisconnect(true);
   WiFi.begin(ssid, password);
 }
 
