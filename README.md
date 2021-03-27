@@ -20,7 +20,7 @@ Hitting the "Reset" button twice will reset the device in AP mode, creating the 
 
 ## Building
 
-The project uses [platform.io](https://platform.io/). It can be build and uploaded with:
+The project uses [platformio.org](https://platformio.org/). It can be build and uploaded with:
 
 ```
 pio run -t upload -e lcd
