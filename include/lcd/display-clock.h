@@ -1,5 +1,6 @@
-#ifndef _DISPLAY_CLOCK_H
-#define _DISPLAY_CLOCK_H
+#if FRONTEND_LCD
+#ifndef _LCD_DISPLAY_CLOCK_H
+#define _LCD_DISPLAY_CLOCK_H
 
 #include <NTPClient.h>
 #include <TFT_eSPI.h>
@@ -19,4 +20,5 @@ class DisplayClock {
     void drawTime(String time);
 };
 
+#endif
 #endif

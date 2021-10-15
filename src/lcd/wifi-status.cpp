@@ -1,15 +1,11 @@
-#include "wifi-status.h"
+#if FRONTEND_LCD
+#include "lcd/wifi-status.h"
 
 WifiStatus::WifiStatus(TFT_eSPI *tft) {
   this->tft = tft;
 }
 
-void WifiStatus::update(boolean dataReceived) {
-  if (this->previousDataReceived != dataReceived) {
-    tft->fillCircle(30, 10, 3, dataReceived ? TFT_GREEN : TFT_RED);
-    this->previousDataReceived = dataReceived;
-  }
-  
+void WifiStatus::update() {
   if (millis() - this->lastUpdate < 1000) {
     return;
   }
@@ -24,3 +20,4 @@ void WifiStatus::update(boolean dataReceived) {
   this->previousLevel = level;
   this->lastUpdate = millis();
 }
+#endif

@@ -1,5 +1,6 @@
-#ifndef _WIFI_STATUS_H
-#define _WIFI_STATUS_H
+#if FRONTEND_LCD
+#ifndef _LCD_WIFI_STATUS_H
+#define _LCD_WIFI_STATUS_H
 
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
@@ -8,7 +9,7 @@
 class WifiStatus {
     public:
     WifiStatus(TFT_eSPI *tft);
-    void update(boolean dataReceived);
+    void update();
 
     private:
     TFT_eSPI *tft;
@@ -17,4 +18,5 @@ class WifiStatus {
     long lastUpdate = -60 * 1000;
 };
 
+#endif
 #endif

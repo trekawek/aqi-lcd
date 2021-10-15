@@ -1,12 +1,13 @@
+#if FRONTEND_LCD
 #include <Arduino.h>
 
-#include "interface.h"
+#include "lcd/interface.h"
 
-#include "bitmaps/icon-humidity.h"
-#include "bitmaps/icon-pm10.h"
-#include "bitmaps/icon-pm25.h"
-#include "bitmaps/icon-pressure.h"
-#include "bitmaps/icon-temp.h"
+#include "lcd/bitmaps/icon-humidity.h"
+#include "lcd/bitmaps/icon-pm10.h"
+#include "lcd/bitmaps/icon-pm25.h"
+#include "lcd/bitmaps/icon-pressure.h"
+#include "lcd/bitmaps/icon-temp.h"
 
 #define INDICATOR_RADIUS 4
 #define INDICATOR_LENGTH 40
@@ -75,7 +76,9 @@ void Interface::update(DisplayModel *model) {
     this->tft->setFreeFont(&FreeSans12pt7b);
     this->tft->fillRect(55, y - 18, 185, offset - 15, TFT_BLACK);
     this->tft->setCursor(90, y);
-    this->tft->print(model->temp);
+    char temp[10];
+    snprintf(temp, 10, "%.0f", round(model->temp));
+    this->tft->print(temp);
     this->tft->print(" C");
     this->tft->drawCircle(this->tft->getCursorX() - 20, y - 15, 2, TFT_WHITE);
   }
@@ -180,7 +183,7 @@ void Interface::drawBitmap(uint16_t x, uint16_t y, const tImage *image) {
   const uint16_t *pdata = image->data;
   for (y0 = 0; y0 < image->height; y0++) {
     for (x0 = 0; x0 < image->width; x0++) {
-      this->tft->drawPixel(x + x0, y + y0, *pdata++);
+      this->tft->drawPixel(x + x0, y + y0, pgm_read_byte(pdata++));
     }
   }
 }
@@ -215,3 +218,4 @@ uint16 Interface::mixColors(uint16_t c1, uint16_t c2, float f) {
 boolean Interface::isDifferent(float f1, float f2) {
   return fabs(f1 - f2) > 0.001;
 }
+#endif

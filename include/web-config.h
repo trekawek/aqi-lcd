@@ -5,31 +5,26 @@
 #include <DoubleResetDetector.h>
 #include <ESP8266WiFi.h>
 #include <IotWebConf.h>
-#include <TFT_eSPI.h>
 
+#include "config.h"
+#include "frontend.h"
 #include "model.h"
 
-#define CONFIG_VERSION "aqiled1"
+#define CONFIG_VERSION "aq01"
 #define DRD_TIMEOUT 10
 #define DRD_ADDRESS 0
 
-typedef struct {
-  String sensorUrl;
-  SensorType sensorType;
-  int timeZoneOffset;
-} Config;
-
 class WebConfig {
   public:
-  WebConfig(TFT_eSPI *tft, std::function<void(Config)> wifiConnected);
+  WebConfig(Logger *logger, CustomWebConfig *customWebConfig, std::function<void(Config, IPAddress)> wifiConnected);
   void update();
 
   private:
-  TFT_eSPI *tft;
+  Logger *logger;
+  CustomWebConfig *customWebConfig;
 
   char sensorUrl[512];
   char sensorType[16];
-  char timezoneOffset[5];
 
   DoubleResetDetector *drd;
 
@@ -41,11 +36,12 @@ class WebConfig {
   static const String SENSOR_TYPE_NAMES[];
   static const String SENSOR_TYPE_VALUES[];
   IotWebConfParameter *sensorTypeParam;
-  IotWebConfParameter *timezoneOffsetParam;
+  boolean displayLogs = true;
 
   boolean formValidator();
   boolean connectAp(const char* apName, const char* password);
   void connectWifi(const char* ssid, const char* password);
+  const int32_t calcWiFiSignalQuality(int32_t rssi);
   void handleRoot();
   void setConfig(Config *config);
   void displayConfig();

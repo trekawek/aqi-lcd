@@ -4,26 +4,30 @@
 #include "data-source/local.h"
 
 #include "fetcher.h"
-#include "interface.h"
-#include "model.h"
 #include "pollution-levels.h"
 
-Fetcher::Fetcher(Interface *interface, DataSource *dataSource) {
-  this->interface = interface;
+Fetcher::Fetcher(Frontend *frontend, DataSource *dataSource) {
   this->dataSource = dataSource;
+  this->frontend = frontend;
+  this->lastDisplayUpdate = -1;
 }
 
 boolean Fetcher::update() {
-  if (millis() - this->lastDisplayUpdate > 60 * 1000) {
+  if (!this->dataSource->isReady()) {
+    return false;
+  }
+  if (this->lastDisplayUpdate == -1 || (millis() - this->lastDisplayUpdate) > INTERVAL_SEC * 1000) {
     JsonModel json;
-    Serial.println("Updating sensor values");
+    frontend->updateDataSourceStatus(IN_PROGRESS);
+    this->lastDisplayUpdate = millis();
     if (this->dataSource->readModel(&json)) {
       DisplayModel displayModel;
       createDisplayModel(&json, &displayModel);
-      interface->update(&displayModel);
-      this->lastDisplayUpdate = millis();
+      frontend->updateDisplayModel(&displayModel);
+      frontend->updateDataSourceStatus(SUCCESS);
       return true;
     } else {
+      frontend->updateDataSourceStatus(FAILURE);
       return false;
     }
   }

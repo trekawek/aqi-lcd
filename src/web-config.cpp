@@ -3,9 +3,10 @@
 const String WebConfig::SENSOR_TYPE_NAMES[] = {"aqi.eco", "local device", ""};
 const String WebConfig::SENSOR_TYPE_VALUES[] = {"AQI_ECO", "LOCAL_DEVICE", ""};
 
-WebConfig::WebConfig(TFT_eSPI *tft, std::function<void(Config)> wifiConnected) {
-  this->tft = tft;
-  this->tft->println("Initializing device...");
+WebConfig::WebConfig(Logger *logger, CustomWebConfig *customWebConfig, std::function<void(Config, IPAddress)> wifiConnected) {
+  this->logger = logger;
+  this->logger->println("Initializing device...");
+  this->customWebConfig = customWebConfig;
 
   this->dnsServer = new DNSServer();
   this->server = new WebServer(80);
@@ -13,19 +14,24 @@ WebConfig::WebConfig(TFT_eSPI *tft, std::function<void(Config)> wifiConnected) {
 
   this->sensorUrlParam = new IotWebConfParameter("Sensor URL", "sensorUrl", this->sensorUrl, 512);
   this->sensorTypeParam = new IotWebConfParameter("Sensor type", "sensorType", this->sensorType, 16, "select", SENSOR_TYPE_NAMES, SENSOR_TYPE_VALUES, "AQI_ECO");
-  this->timezoneOffsetParam = new IotWebConfParameter("Timezone offset (hours)", "timezoneOffset", this->timezoneOffset, 5, "number", NULL, "1", "min=\"-12\" max=\"12\"");
   this->iotWebConf->addParameter(this->sensorUrlParam);
   this->iotWebConf->addParameter(this->sensorTypeParam);
-  this->iotWebConf->addParameter(this->timezoneOffsetParam);
+  customWebConfig->addParameters(this->iotWebConf);
   this->iotWebConf->setFormValidator([this]{ return this->formValidator(); });
   this->iotWebConf->setWifiConnectionCallback([wifiConnected, this]{
     Config config;
     this->setConfig(&config);
-    this->displayConfig();
-    wifiConnected(config);
+    if (this->displayLogs) {
+      this->displayConfig();
+      this->displayLogs = false;
+    }
+    wifiConnected(config, WiFi.localIP());
   });
   this->iotWebConf->setApConnectionHandler([this](const char* apName, const char* password){ return this->connectAp(apName, password); });
   this->iotWebConf->setWifiConnectionHandler([this](const char* ssid, const char* password){ return this->connectWifi(ssid, password); });
+  this->iotWebConf->setConfigSavedCallback([]{
+    ESP.restart();
+  });
 
   this->drd = new DoubleResetDetector(DRD_TIMEOUT, DRD_ADDRESS);
   if (!this->drd->detectDoubleReset()) {
@@ -58,8 +64,7 @@ boolean WebConfig::formValidator() {
     valid = false;
   }
 
-  if (this->server->arg(this->timezoneOffsetParam->getId()).length() == 0) {
-    this->timezoneOffsetParam->errorMessage = "Please provide the timezone offset.";
+  if (!this->customWebConfig->validate(this->server)) {
     valid = false;
   }
 
@@ -67,16 +72,32 @@ boolean WebConfig::formValidator() {
 }
 
 boolean WebConfig::connectAp(const char* apName, const char* password) {
-  this->tft->println("Creating access point");
-  this->tft->println("SSID:     " + String(apName));
-  this->tft->println("Password: " + String(password));
+  if (this->displayLogs) {
+    this->logger->println("Creating access point");
+    this->logger->println("SSID:     " + String(apName));
+    this->logger->println("Password: " + String(password));
+  }
   return WiFi.softAP(apName, password);
 }
 
 void WebConfig::connectWifi(const char* ssid, const char* password) {
-  this->tft->print("Connecting to WiFi ");
-  this->tft->println(ssid);
+  if (this->displayLogs) {
+    this->logger->print("Connecting to WiFi ");
+    this->logger->println(ssid);
+  }
+  wifi_set_sleep_type(NONE_SLEEP_T); //LIGHT_SLEEP_T and MODE_SLEEP_T
+  WiFi.softAPdisconnect(true);
   WiFi.begin(ssid, password);
+}
+
+const int32_t WebConfig::calcWiFiSignalQuality(int32_t rssi) {
+  if (rssi > -50) {
+    rssi = -50;
+  }
+  if (rssi < -100) {
+    rssi = -100;
+  }
+  return (rssi + 100) * 2;
 }
 
 void WebConfig::handleRoot() {
@@ -85,6 +106,25 @@ void WebConfig::handleRoot() {
   }
   String s = "<!DOCTYPE html><html lang=\"en\"><head><meta name=\"viewport\" content=\"width=device-width, initial-scale=1, user-scalable=no\"/>";
   s += "<title>AQI LCD</title></head><body><p>Hello to AQI LCD!</p>";
+
+  if (WiFi.status() == WL_CONNECTED) {
+    s += "<p>IP address: {ip}<br>";
+    s += "Subnet mask: {mask}<br>";
+    s += "Gateway: {gateway}<br>";
+    s += "MAC address: {mac}</p>";
+    s += "<p>SSID: {ssid}<br>";
+    s += "RSSI: {rssi} dBm<br>";
+    s += "Signal: {signal}%</p>";
+
+    s.replace("{ip}", WiFi.localIP().toString());
+    s.replace("{gateway}", WiFi.gatewayIP().toString());
+    s.replace("{mask}", WiFi.subnetMask().toString());
+    s.replace("{mac}", WiFi.macAddress());
+    s.replace("{ssid}", WiFi.SSID());
+    s.replace("{rssi}", String(WiFi.RSSI()));
+    s.replace("{signal}", String(WebConfig::calcWiFiSignalQuality(WiFi.RSSI())));
+  }
+
   s += "<p>Go to <a href='config'>configure page</a> to change settings.</p>";
   s += "</body></html>\n";
   this->server->send(200, "text/html", s);
@@ -98,19 +138,18 @@ void WebConfig::setConfig(Config *config) {
   } else if (sensorTypeStr = "LOCAL_DEVICE") {
     config->sensorType = LOCAL_DEVICE;
   }
-  config->timeZoneOffset = String(this->timezoneOffset).toInt();
 }
 
 void WebConfig::displayConfig() {
-  this->tft->print("Local IP:         ");
-  this->tft->println(WiFi.localIP());
+  this->logger->print("Local IP:         ");
+  this->logger->println(WiFi.localIP().toString());
 
-  this->tft->print("Sensor type:      ");
-  this->tft->println(this->sensorType);
-  this->tft->println("Sensor URL:");
-  this->tft->println(this->sensorUrl);
-  this->tft->print("Timezeone offset: ");
-  this->tft->println(this->timezoneOffset);
+  this->logger->print("Sensor type:      ");
+  this->logger->println(this->sensorType);
+  this->logger->println("Sensor URL:");
+  this->logger->println(this->sensorUrl);
+
+  this->customWebConfig->displayConfig(logger);
 
   delay(1000 * 2);
 }
