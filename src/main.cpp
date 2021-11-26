@@ -18,8 +18,11 @@ Frontend *frontend = new LcdFrontend();
 #elif FRONTEND_LED
 #include "led/led-frontend.h"
 Frontend *frontend = new LedFrontend();
+#elif FRONTEND_LED_MATRIX
+#include "led-matrix/led-matrix-frontend.h"
+Frontend *frontend = new LedMatrixFrontend();
 #else
-#error "Either FRONTEND_LCD or FRONTEND_LED should be set"
+#error "Either FRONTEND_LCD, FRONTEND_LED or FRONTEND_LED_MATRIX should be set"
 #endif
 
 void wifiConnected(Config config, IPAddress localIp) {
