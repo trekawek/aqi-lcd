@@ -30,7 +30,9 @@ pio run -t upload -e lcd
 
 Hardware is available at the Nettigo's website: https://nettigo.pl/products/plytka-pcb-ekran-dotykowy-z-wifi-i-karta-sd-do-wemos-d1-mini
 
-## Neopixel LED frontend
+## Alternative frontends
+
+### Neopixel LED frontend
 
 AQI-LCD can be build in an alternative mode, in which the WS2812-based LED driver is used to display the pollution level:
 
@@ -45,3 +47,12 @@ By default it assumes that a 60-LED strip is connected to the `D4` pin on Wemos.
   -DLED_PIN=2     # D4 on wemost
   -DBRIGHTNESS=25 # max: 255
 ```
+
+### LED matrix frontend
+
+```
+pio run -t upload -e led-matrix
+```
+
+Hardware info:
+https://easyeda.com/nettigo/aqi-led-board
