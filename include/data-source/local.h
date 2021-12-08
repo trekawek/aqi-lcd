@@ -29,7 +29,7 @@ class LocalDataSource : public DataSource {
     static boolean inArray(const String array[], String str);
     
     WiFiClient *client;
-    StaticJsonDocument<JSON_ARRAY_SIZE(15) + 15*JSON_OBJECT_SIZE(2) + JSON_OBJECT_SIZE(3) + 490> doc;
+    StaticJsonDocument<2048> doc;
     MDNSResolver *mdnsResolver;
 
     String protocol;
