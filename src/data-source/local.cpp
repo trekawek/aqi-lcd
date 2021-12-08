@@ -1,7 +1,7 @@
 #include "data-source/local.h"
 
-const String LocalDataSource::P10_VALUES[] = { "SDS_P1", "PMS_P1", "HPM_P1", "" };
-const String LocalDataSource::P25_VALUES[] = { "SDS_P2", "PMS_P2", "HPM_P2", "" };
+const String LocalDataSource::P10_VALUES[] = { "SDS_P1", "PMS_P1", "HPM_P1", "SPS30_P1", "" };
+const String LocalDataSource::P25_VALUES[] = { "SDS_P2", "PMS_P2", "HPM_P2", "SPS30_P2",  "" };
 const String LocalDataSource::TEMP_VALUES[] = { "BME280_temperature", "SHT3X_temperature", "BMP_temperature", "temperature", "" };
 const String LocalDataSource::HUMIDITY_VALUES[] = { "BME280_humidity", "SHT3X_humidity",  "humidity", "" };
 const String LocalDataSource::PRESSURE_VALUES[] = { "BME280_pressure", "BMP_pressure", "" };
